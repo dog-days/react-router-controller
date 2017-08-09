@@ -40,6 +40,7 @@
     "react-router-dom": "^4.1.2"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "cross-env": "^5.0.4",
     "husky": "^0.14.3",
     "lint-staged": "^4.0.3",
@@ -75,6 +76,31 @@
       "development": {
         "plugins": [
           "react-hot-loader/babel"
+        ]
+      },
+      "default": {
+        "plugins": [
+          "transform-decorators-legacy"
+        ],
+        "presets": [
+          "react",
+          "es2015",
+          "stage-0"
+        ]
+      },
+      "es": {
+        "plugins": [
+          "transform-decorators-legacy"
+        ],
+        "presets": [
+          "react",
+          [
+            "es2015",
+            {
+              "modules": false
+            }
+          ],
+          "stage-0"
         ]
       }
     }
