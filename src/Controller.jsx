@@ -1,6 +1,6 @@
 import React from 'react';
 //基本的配置，会在当前类和./index.jsx中使用。
-export var ContollerConfig = {};
+export var ControllerConfig = {};
 /**
  * url风格定义如下，跟php框架的Yii一致，例如：
  * pathname=/main/about/id/100/appid/aiermu
@@ -16,7 +16,7 @@ export default class Contoller {
    * {controllerDir:'',viewDir: ''}
    */
   static set(config) {
-    ContollerConfig = config;
+    ControllerConfig = config;
   }
   /**
    * 根据传进来的参数，检查url的params是否符合要求，controller指定的格式
@@ -56,7 +56,7 @@ export default class Contoller {
    * @param {object} params 路由可选配置参数
    */
   render(viewId, config, params) {
-    if (!ContollerConfig.readControllerDir || !ContollerConfig.readViewDir) {
+    if (!ControllerConfig.readControllerDir || !ControllerConfig.readViewDir) {
       console.error('请先配置Controller的controller文件夹和view文件夹的路径读取方法！');
     }
     //begin--页面title设置
@@ -65,7 +65,7 @@ export default class Contoller {
     }
     document.title = config.title;
     //end--页面title设置
-    return ContollerConfig.readViewDir(viewId).then(ViewComponent => {
+    return ControllerConfig.readViewDir(viewId).then(ViewComponent => {
       var newProps = {
         actions: config.actions,
         params
@@ -87,6 +87,8 @@ export default class Contoller {
             );
           }
         },
+        viewConfig: config,
+        LayoutComponent: this.LayoutComponent,
         path: this.getReactRouterPath(params)
       });
     });

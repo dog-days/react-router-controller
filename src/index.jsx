@@ -1,4 +1,4 @@
-import { ContollerConfig } from './Controller';
+import { ControllerConfig } from './Controller';
 /**
  * 根据viewId和contollerId获取url的配置参数
  * url风格定义如下，跟php框架的Yii一致，例如：
@@ -47,7 +47,7 @@ export function getViewConfig(pathname) {
   var controllerId = params.controllerId;
   var viewId = params.viewId;
   var funcName = viewId + 'View';
-  return ContollerConfig.readControllerDir(controllerId).then(controller => {
+  return ControllerConfig.readControllerDir(controllerId).then(controller => {
     if (!controller) {
       return false;
     }

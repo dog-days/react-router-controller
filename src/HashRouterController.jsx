@@ -3,7 +3,7 @@ import { HashRouter } from 'react-router-dom';
 import RouterController from './RouterController';
 
 /**
- * BrowserRouter类型控制器 
+ * HashRouter类型控制器
  */
 class HashRouterController extends React.Component {
   render() {

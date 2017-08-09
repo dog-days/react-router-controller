@@ -6,8 +6,7 @@ import nopage from './view/nopage';
 
 Controller.set({
   readViewDir(viewId) {
-    return import(
-      `./view/${viewId}/index.jsx`).then(component => {
+    return import(`./view/${viewId}/index.jsx`).then(component => {
       return component.default;
     });
   },
@@ -31,10 +30,7 @@ Controller.set({
   indexPath: '/main/index'
 });
 
-function renderApp(config) {
-  const target = document.getElementById('root');
-  if (target) {
-    render(<BrowserRouterController basename="test"/>, target);
-  }
-}
-renderApp();
+render(
+  <BrowserRouterController basename="test" />,
+  document.getElementById('root')
+);

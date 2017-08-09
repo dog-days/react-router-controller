@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import RouterController from './RouterController';
 
 /**
- * BrowserRouter类型控制器 
+ * BrowserRouter类型控制器
  */
 class BrowserRouterController extends React.Component {
   render() {

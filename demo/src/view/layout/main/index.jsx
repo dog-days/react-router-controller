@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 class MainLayout extends React.Component {
+  componentWillUnmount(){
+    console.log('layout unmout')
+  }
   render() {
     //console.debug(this.props)
     return (
