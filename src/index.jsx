@@ -6,7 +6,7 @@ import { ContollerConfig } from './Controller';
  * 上面的pathname会解析为
  * {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu'}
  * 会当参数传给 MainControlle的aboutView方法
- *@param {pathname} location.pathname
+ *@param {string} pathname location.pathname
  */
 export function getParams(pathname) {
   //替换字符之替换第一个，后面的属于参数，不替换，还要替换成特殊的字符
@@ -41,9 +41,8 @@ export function getParams(pathname) {
 /**
  * 获取页面配置提供给react-router使用，动态路由。
  *@param {string} pathanme location.pathname || location.hash
- *@param {function} callback 回调函数
  */
-export function getViewConfig(pathname, callback) {
+export function getViewConfig(pathname) {
   var params = getParams(pathname);
   var controllerId = params.controllerId;
   var viewId = params.viewId;

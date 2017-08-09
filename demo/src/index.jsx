@@ -6,7 +6,8 @@ import nopage from './view/nopage';
 
 Controller.set({
   readViewDir(viewId) {
-    return import(`./view/${viewId}/index.jsx`).then(component => {
+    return import(
+      `./view/${viewId}/index.jsx`).then(component => {
       return component.default;
     });
   },
@@ -26,13 +27,14 @@ Controller.set({
   //设置404页面，会覆盖默认的404页面
   NotMatchComponent: nopage,
   //设置首页path（跳转路径，即react-router path='/'时，会跳转到indexPath）
+  //第一个字符必须是'/'，不能是main/index，要是绝对的路径
   indexPath: '/main/index'
 });
 
 function renderApp(config) {
   const target = document.getElementById('root');
   if (target) {
-    render(<BrowserRouterController />, target);
+    render(<BrowserRouterController basename="test"/>, target);
   }
 }
 renderApp();
