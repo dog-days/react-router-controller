@@ -1,0 +1,85 @@
+{
+  "name": "react-router-controller",
+  "version": "0.0.1",
+  "description": "react-router-controller，react路由控制器",
+  "main": "libs/index.js",
+  "scripts": {
+    "build": "npm run build-es && npm run build-default",
+    "build-es": "cross-env BABEL_ENV=es babel ./src -d es",
+    "build-default": "cross-env BABEL_ENV=default babel ./src -d libs",
+    "build-default-watch": "cross-env BABEL_ENV=default babel ./src -d libs -w",
+    "build-es-watch": "cross-env BABEL_ENV=es babel ./src -d es -w",
+    "start-demo": "react-boilerplate-app-scripts start",
+    "build-demo": "react-boilerplate-app-scripts build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --trailing-comma es5 --single-quote --write './*/*(*.js|*.jsx)'",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dog-days/react-router-controller.git"
+  },
+  "keywords": [
+    "react",
+    "router",
+    "controller",
+    "控制器",
+    "路由"
+  ],
+  "author": "xianshannan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dog-days/react-router-controller/issues"
+  },
+  "homepage": "https://github.com/dog-days/react-router-controller#readme",
+  "dependencies": {
+    "react-router-dom": "^4.1.2"
+  },
+  "devDependencies": {
+    "cross-env": "^5.0.4",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.3",
+    "prettier": "^1.5.3",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-boilerplate-app-scripts": "^0.0.26",
+    "react-dom": "^15.6.1"
+  },
+  "peerDependencies": {
+    "prop-types": ">=15.5.7",
+    "react": ">=15.5.0"
+  },
+  "react-boilerplate-app-scripts": {
+    "appSrcPath": "demo/src",
+    "appPublicPath": "demo/public"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      [
+        "es2015",
+        {
+          "modules": false
+        }
+      ],
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-decorators-legacy"
+    ],
+    "env": {
+      "development": {
+        "plugins": [
+          "react-hot-loader/babel"
+        ]
+      }
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  }
+}
