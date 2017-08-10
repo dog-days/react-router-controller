@@ -35,6 +35,12 @@ export default class Contoller {
     }
     return flag;
   }
+  /**
+   * 根据param获取router path
+   * @param { object } params 格式如下
+   * {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
+   * @return { string } eg. /main/about/id/100/appid/aiermu
+   */
   getReactRouterPath(params) {
     var path = '/';
     for (var k in params) {
@@ -53,7 +59,8 @@ export default class Contoller {
   /**
    * @param {string} viewId view文件夹下的文件夹名，view下需要遵守命名规则
    * @param {object} config 一些配置
-   * @param {object} params 路由可选配置参数
+   * @param {object} params 路由配置参数
+   * eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
    */
   render(viewId, config, params) {
     if (!ControllerConfig.readControllerFile || !ControllerConfig.readViewFile) {
@@ -69,6 +76,7 @@ export default class Contoller {
     return ControllerConfig.readViewFile(viewId).then(ViewComponent => {
       var newProps = {
         actions: config.actions,
+        viewConfig: config,
         params
       };
       return Object.assign({}, config, {

@@ -146,6 +146,7 @@ class RouteController extends React.Component {
     if (config && config.viewConfig) {
       var viewConfig = config.viewConfig;
       layoutProps = {
+        viewConfig,
         params: viewConfig.params,
         breadcrumbs: viewConfig.breadcrumbs
       };
