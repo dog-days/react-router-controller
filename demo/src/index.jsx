@@ -31,6 +31,6 @@ Controller.set({
 });
 
 render(
-  <BrowserRouterController basename="test" />,
+  <BrowserRouterController />,
   document.getElementById('root')
 );

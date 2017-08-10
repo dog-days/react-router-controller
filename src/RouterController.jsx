@@ -5,10 +5,13 @@ import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
 
 /**
- * basename适配
- * 例如basename=test或者test/或者/test/会适配为/test
+ * url适配
+ * 例如url=test或者test/或者/test/会适配为/test
  */
-export function basenameAdapter(basename) {
+export function urlPathAdapter(basename) {
+  if (!basename) {
+    return;
+  }
   if (Object.prototype.toString.apply(basename) !== '[object String]') {
     console.error('请传入字符串！');
     return;
@@ -33,7 +36,7 @@ export function basenameAdapter(basename) {
  */
 class RouterController extends React.Component {
   state = {};
-  basename = basenameAdapter(this.props.basename);
+  basename = urlPathAdapter(this.props.basename);
   /**
    * 根据history的值获取pathname
    */
@@ -117,7 +120,7 @@ class RouterController extends React.Component {
           <Route path={config.path} component={config.component} />}
         {pathname === '/' &&
           ControllerConfig.indexPath &&
-          <Redirect from="/" to={ControllerConfig.indexPath} />}
+          <Redirect from="/" to={urlPathAdapter(ControllerConfig.indexPath)} />}
       </Switch>
     );
   }
