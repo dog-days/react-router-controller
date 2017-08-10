@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { getViewConfig } from './';
 import { ControllerConfig } from './Controller';
@@ -35,6 +36,15 @@ export function urlPathAdapter(basename) {
  *@this { string } pathname 相当与上个页面的pathname，切换页面会变化。
  */
 class RouteController extends React.Component {
+  static contextTypes = {
+    router: PropTypes.shape({
+      history: PropTypes.shape({
+        push: PropTypes.func.isRequired,
+        replace: PropTypes.func.isRequired,
+      }).isRequired,
+      staticContext: PropTypes.object,
+    }).isRequired,
+  };
   state = {};
   basename = urlPathAdapter(this.props.basename);
   /**
@@ -58,6 +68,11 @@ class RouteController extends React.Component {
   setConfig() {
     var pathname = this.getPathNameByHistory();
     getViewConfig(pathname).then(config => {
+      if (!config && pathname === '/') {
+        const history = this.context.router.history;
+        history.push(ControllerConfig.indexPath);
+        return false;
+      }
       var lastConfig;
       if (config) {
         lastConfig = config;
@@ -65,13 +80,13 @@ class RouteController extends React.Component {
         //如果config为false，为404页面
         lastConfig = {
           component:
-            ControllerConfig.NotMatchComponent || DefaultNotMatchComponent
+            ControllerConfig.NotMatchComponent || DefaultNotMatchComponent,
         };
         document.title = '404 not found';
       }
       this.setState({
         config: lastConfig,
-        index: false
+        index: false,
       });
     });
   }
@@ -148,7 +163,7 @@ class RouteController extends React.Component {
       layoutProps = {
         viewConfig,
         params: viewConfig.params,
-        breadcrumbs: viewConfig.breadcrumbs
+        breadcrumbs: viewConfig.breadcrumbs,
       };
     }
     return (
@@ -163,7 +178,8 @@ class RouteController extends React.Component {
           config &&
           !config.LayoutComponent &&
           <Route path={config.path} component={config.component} />}
-        {pathname === '/' &&
+        {false &&
+          pathname === '/' &&
           ControllerConfig.indexPath &&
           <Redirect from="/" to={urlPathAdapter(ControllerConfig.indexPath)} />}
       </Switch>
