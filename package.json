@@ -11,10 +11,11 @@
     "build-es-watch": "cross-env BABEL_ENV=es babel ./src -d es -w",
     "start-demo": "react-boilerplate-app-scripts start",
     "build-demo": "react-boilerplate-app-scripts build",
+    "precommit": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
-    "*.js": [
+    "*.{js,jsx}": [
       "prettier --trailing-comma es5 --single-quote --write './*/*(*.js|*.jsx)'",
       "git add"
     ]

@@ -9,13 +9,13 @@ export default class MainController extends Controller {
       {
         title: '主页',
         breadcrumbs: [],
-        actions: true
+        actions: true,
       },
       params
     );
   }
   aboutView(params) {
-    if(!this.checkParams(params,['id'])) {
+    if (!this.checkParams(params, ['id'])) {
       return false;
     }
     return this.render(
@@ -23,7 +23,7 @@ export default class MainController extends Controller {
       {
         title: '关于',
         breadcrumbs: [],
-        actions: true
+        actions: true,
       },
       params
     );
