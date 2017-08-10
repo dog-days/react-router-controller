@@ -30,7 +30,7 @@ export default class Contoller {
         flag = false;
       }
     });
-    if(!flag) {
+    if (!flag) {
       console.error('参数跟指定的不一致，将返回404页面。');
     }
     return flag;
@@ -56,7 +56,7 @@ export default class Contoller {
    * @param {object} params 路由可选配置参数
    */
   render(viewId, config, params) {
-    if (!ControllerConfig.readControllerDir || !ControllerConfig.readViewDir) {
+    if (!ControllerConfig.readControllerFile || !ControllerConfig.readViewFile) {
       console.error('请先配置Controller的controller文件夹和view文件夹的路径读取方法！');
     }
     //begin--页面title设置
@@ -64,29 +64,18 @@ export default class Contoller {
       config.title += this.suffixTtile;
     }
     document.title = config.title;
+    config.params = params;
     //end--页面title设置
-    return ControllerConfig.readViewDir(viewId).then(ViewComponent => {
+    return ControllerConfig.readViewFile(viewId).then(ViewComponent => {
       var newProps = {
         actions: config.actions,
         params
       };
       return Object.assign({}, config, {
         component: props => {
-          var LayoutComponent = this.LayoutComponent;
-          if (!LayoutComponent) {
-            return <ViewComponent {...props} {...newProps} />;
-          } else {
-            var layoutProps = {
-              breadcrumbs: config.breadcrumbs,
-              params
-            };
-            return (
-              <LayoutComponent {...props} {...layoutProps}>
-                <ViewComponent {...props} {...newProps} />
-              </LayoutComponent>
-            );
-          }
+          return <ViewComponent {...props} {...newProps} />;
         },
+        //存放所有的view config配置
         viewConfig: config,
         LayoutComponent: this.LayoutComponent,
         path: this.getReactRouterPath(params)

@@ -113,10 +113,25 @@ class RouterController extends React.Component {
   render() {
     const { config } = this.state;
     var pathname = this.getPathNameByHistory();
+    var layoutProps = {};
+    if (config && config.viewConfig) {
+      var viewConfig = config.viewConfig;
+      layoutProps = {
+        params: viewConfig.params,
+        breadcrumbs: viewConfig.breadcrumbs
+      };
+    }
     return (
       <Switch>
         {pathname !== '/' &&
           config &&
+          config.LayoutComponent &&
+          <config.LayoutComponent {...layoutProps}>
+            <Route path={config.path} component={config.component} />
+          </config.LayoutComponent>}
+        {pathname !== '/' &&
+          config &&
+          !config.LayoutComponent &&
           <Route path={config.path} component={config.component} />}
         {pathname === '/' &&
           ControllerConfig.indexPath &&

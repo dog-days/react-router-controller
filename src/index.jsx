@@ -47,7 +47,7 @@ export function getViewConfig(pathname) {
   var controllerId = params.controllerId;
   var viewId = params.viewId;
   var funcName = viewId + 'View';
-  return ControllerConfig.readControllerDir(controllerId).then(controller => {
+  return ControllerConfig.readControllerFile(controllerId).then(controller => {
     if (!controller) {
       return false;
     }

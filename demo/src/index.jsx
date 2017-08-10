@@ -5,12 +5,12 @@ import BrowserRouterController from './../../src/BrowserRouterController';
 import nopage from './view/nopage';
 
 Controller.set({
-  readViewDir(viewId) {
+  readViewFile(viewId) {
     return import(`./view/${viewId}/index.jsx`).then(component => {
       return component.default;
     });
   },
-  readControllerDir(controllerId) {
+  readControllerFile(controllerId) {
     //webpackMode: eager是使import变为不异步，跟require一样，
     //但是返回的时promise对象
     return import(/* webpackMode: "eager" */
