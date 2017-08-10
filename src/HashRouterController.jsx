@@ -7,10 +7,10 @@ import RouteController from './RouteController';
  */
 class HashRouterController extends React.Component {
   render() {
-    const { basename } = this.props;
+    const { basename, hot } = this.props;
     return (
       <HashRouter {...this.props}>
-        <RouteController history="hash" basename={basename} />
+        <RouteController history="hash" basename={basename} hot={hot} />
       </HashRouter>
     );
   }

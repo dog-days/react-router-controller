@@ -7,10 +7,10 @@ import RouteController from './RouteController';
  */
 class BrowserRouterController extends React.Component {
   render() {
-    const { basename } = this.props;
+    const { basename, hot } = this.props;
     return (
       <BrowserRouter {...this.props}>
-        <RouteController history="browser" basename={basename} />
+        <RouteController history="browser" basename={basename} hot={hot} />
       </BrowserRouter>
     );
   }

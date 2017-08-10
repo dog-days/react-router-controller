@@ -75,7 +75,21 @@ class RouteController extends React.Component {
       });
     });
   }
+  /**
+   * 这里的判断基本都是相等了才会返回通过
+   * this.hot和this.pathname都是这样，
+   * 因为切换页面时，会首先运行一次以前的页面，然后才会切换至新的页面，
+   * 这里就是为了解决切换时重复渲染的问题。
+   */
   shouldComponentUpdate(nextProps, nextState) {
+    //begin--热替换开启处理
+    const { hot } = nextProps;
+    if (hot !== this.hot) {
+      //hot不相等时，不渲染上个未变化的页面
+      this.hot = hot;
+      return false;
+    }
+    //begin--热替换开启处理
     var pathname = this.getPathNameByHistory();
     //整个页面重载，this.pathname为undefined
     if (this.pathname === undefined) {
@@ -100,13 +114,28 @@ class RouteController extends React.Component {
   componentDidMount() {
     this.setConfig();
   }
-  componentWillReceiveProps() {
+  componentWillReceiveProps(nextProps) {
     var pathname = this.getPathNameByHistory();
-    //点击链接切换页面时，这函数会触发运行
-    //this.pathanme !== pathname
-    //console.debug(this.pathname,pathname)
-    if (this.pathname !== pathname) {
-      this.setConfig();
+    const { hot } = nextProps;
+    //是否开启热替换，这里做了热替换处理兼容处理
+    if (hot) {
+      if (this.hot !== hot) {
+        this.setConfig();
+      } else {
+        //点击链接切换页面时，这函数会触发运行
+        //this.pathanme !== pathname
+        //console.debug(this.pathname,pathname)
+        if (this.pathname !== pathname) {
+          this.setConfig();
+        }
+      }
+    } else {
+      //点击链接切换页面时，这函数会触发运行
+      //this.pathanme !== pathname
+      //console.debug(this.pathname,pathname)
+      if (this.pathname !== pathname) {
+        this.setConfig();
+      }
     }
   }
 
