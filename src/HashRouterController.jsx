@@ -1,6 +1,6 @@
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
-import RouterController from './RouterController';
+import RouteController from './RouteController';
 
 /**
  * HashRouter类型控制器
@@ -10,7 +10,7 @@ class HashRouterController extends React.Component {
     const { basename } = this.props;
     return (
       <HashRouter {...this.props}>
-        <RouterController history="hash" basename={basename} />
+        <RouteController history="hash" basename={basename} />
       </HashRouter>
     );
   }

@@ -34,7 +34,7 @@ export function urlPathAdapter(basename) {
  *@state { object } config 路由的一些配置
  *@this { string } pathname 相当与上个页面的pathname，切换页面会变化。
  */
-class RouterController extends React.Component {
+class RouteController extends React.Component {
   state = {};
   basename = urlPathAdapter(this.props.basename);
   /**
@@ -140,4 +140,4 @@ class RouterController extends React.Component {
     );
   }
 }
-export default RouterController;
+export default RouteController;

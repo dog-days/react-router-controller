@@ -6,13 +6,15 @@ import nopage from './view/nopage';
 
 Controller.set({
   readViewFile(viewId) {
+    //view可以异步载入
     return import(`./view/${viewId}/index.jsx`).then(component => {
       return component.default;
     });
   },
   readControllerFile(controllerId) {
     //webpackMode: eager是使import变为不异步，跟require一样，
-    //但是返回的时promise对象
+    //但是返回的时promise对象，不能使用require，require会把没必要的文件载入
+    //最好不适用异步载入，可能导致一些问题
     return import(/* webpackMode: "eager" */
     `./controller/${controllerId}.jsx`)
       .then(controller => {

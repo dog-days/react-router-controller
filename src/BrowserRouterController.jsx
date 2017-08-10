@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import RouterController from './RouterController';
+import RouteController from './RouteController';
 
 /**
  * BrowserRouter类型控制器
@@ -10,7 +10,7 @@ class BrowserRouterController extends React.Component {
     const { basename } = this.props;
     return (
       <BrowserRouter {...this.props}>
-        <RouterController history="browser" basename={basename} />
+        <RouteController history="browser" basename={basename} />
       </BrowserRouter>
     );
   }
