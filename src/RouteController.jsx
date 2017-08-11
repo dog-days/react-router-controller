@@ -65,7 +65,28 @@ class RouteController extends React.Component {
         return false;
       }
       var lastConfig;
-      if (config) {
+      if (config && config.component) {
+        //console.error('controller的render方法传入的ViewComponent不是React组件！');
+        //lastConfig = {
+        //component: props => {
+        //return (
+        //<div
+        //style={{
+        //border: '1px solid #fcdbd9',
+        //backgroundColor: '#fef0ef',
+        //padding: '11px 48px 8px 16px',
+        //borderRadius: '4px',
+        //fontSize: '13px',
+        //lineHeight: '1.5',
+        //color: 'rgba(0,0,0,.65)'
+        //}}
+        //>
+        //controler render方法传入的ViewComponent 不是React组件！
+        //</div>
+        //);
+        //}
+        //};
+        //document.title = 'ViewComponent is not valid react component.';
         lastConfig = config;
       } else {
         //如果config为false，为404页面

@@ -57,13 +57,13 @@ export default class Contoller {
     return path;
   }
   /**
-   * @param {string} viewId view文件夹下的文件夹名，view下需要遵守命名规则
    * @param {object} config 一些配置
    * @param {object} params 路由配置参数
+   * @param {object} ViewComponent react view 组件，如果存在，覆盖默认的。
    * eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
    */
-  render(viewId, config, params) {
-    if (!ControllerConfig.readControllerFile || !ControllerConfig.readViewFile) {
+  render(config, params = {}, ViewComponent) {
+    if (!ControllerConfig.readControllerFile) {
       console.error('请先配置Controller的controller文件夹和view文件夹的路径读取方法！');
     }
     //begin--页面title设置
@@ -73,21 +73,35 @@ export default class Contoller {
     document.title = config.title;
     config.params = params;
     //end--页面title设置
-    return ControllerConfig.readViewFile(viewId).then(ViewComponent => {
-      var newProps = {
-        actions: config.actions,
-        viewConfig: config,
-        params
+    //view的部分props
+    var newProps = {
+      actions: config.actions,
+      viewConfig: config,
+      params,
+    };
+    var returnConfig = {
+      //存放所有的view config配置
+      viewConfig: config,
+      LayoutComponent: this.LayoutComponent,
+      path: this.getReactRouterPath(params),
+    };
+    if (ViewComponent) {
+      returnConfig.component = props => {
+        return <ViewComponent {...props} {...newProps} />;
       };
-      return Object.assign({}, config, {
-        component: props => {
-          return <ViewComponent {...props} {...newProps} />;
-        },
-        //存放所有的view config配置
-        viewConfig: config,
-        LayoutComponent: this.LayoutComponent,
-        path: this.getReactRouterPath(params)
-      });
-    });
+      return returnConfig;
+    } else {
+      var viewId = params.viewId;
+      return (
+        ControllerConfig.readViewFile &&
+        ControllerConfig.readViewFile(viewId).then(ViewComponent => {
+          return Object.assign({}, returnConfig, {
+            component: props => {
+              return <ViewComponent {...props} {...newProps} />;
+            },
+          });
+        })
+      );
+    }
   }
 }

@@ -5,11 +5,9 @@ export default class MainController extends Controller {
   LayoutComponent = LayoutComponent;
   indexView(params) {
     return this.render(
-      params.viewId,
       {
         title: '主页',
         breadcrumbs: [],
-        actions: true,
       },
       params
     );
@@ -19,11 +17,9 @@ export default class MainController extends Controller {
       return false;
     }
     return this.render(
-      params.viewId,
       {
         title: '关于',
         breadcrumbs: [],
-        actions: true,
       },
       params
     );
