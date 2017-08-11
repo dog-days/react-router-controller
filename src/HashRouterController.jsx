@@ -10,7 +10,7 @@ class HashRouterController extends React.Component {
     const { basename, hot } = this.props;
     return (
       <HashRouter {...this.props}>
-        <RouteController history="hash" basename={basename} hot={hot} />
+        <RouteController historyType="hash" basename={basename} hot={hot} />
       </HashRouter>
     );
   }

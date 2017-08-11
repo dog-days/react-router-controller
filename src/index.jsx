@@ -1,5 +1,28 @@
 import { ControllerConfig } from './Controller';
 /**
+ * react-router pathname适配
+ * 例如url=test或者test/或者/test/会适配为/test
+ */
+export function pathnameAdapter(pathname) {
+  if (!pathname) {
+    return;
+  }
+  if (Object.prototype.toString.apply(pathname) !== '[object String]') {
+    console.error('请传入字符串！');
+    return;
+  }
+  //pathname第一个字符必须是'/'
+  if (pathname[0] !== '/') {
+    pathname = '/' + pathname;
+  }
+  //pathname最后一个字符不能是'/'
+  if (pathname[pathname.length - 1] === '/') {
+    pathname = pathname.slice(0, pathname.length - 1);
+  }
+  return pathname;
+}
+
+/**
  * 根据viewId和contollerId获取url的配置参数
  * url风格定义如下，跟php框架的Yii一致，例如：
  * pathname=/main/about/id/100/appid/aiermu
@@ -26,7 +49,7 @@ export function getParams(pathname) {
   splitParams.shift();
   var params = {
     controllerId,
-    viewId
+    viewId,
   };
   //整合params
   splitParams.forEach((v, k) => {

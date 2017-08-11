@@ -10,7 +10,7 @@ class BrowserRouterController extends React.Component {
     const { basename, hot } = this.props;
     return (
       <BrowserRouter {...this.props}>
-        <RouteController history="browser" basename={basename} hot={hot} />
+        <RouteController historyType="browser" basename={basename} hot={hot} />
       </BrowserRouter>
     );
   }

@@ -36,11 +36,11 @@ const postcssLoaderConfig = {
           'last 4 versions',
           'Firefox ESR',
           // React doesn't support IE8 anyway
-          'not ie < 9'
-        ]
-      })
-    ]
-  }
+          'not ie < 9',
+        ],
+      }),
+    ],
+  },
 };
 
 //webpack配置项
@@ -50,10 +50,10 @@ var config = {
   devtool: 'source-map',
   //隐藏终端的warning信息
   performance: {
-    hints: false
+    hints: false,
   },
   entry: {
-    app: paths.appEntry
+    app: paths.appEntry,
   },
   output: {
     filename: 'static/js/bundle.js?hash=[hash]',
@@ -62,11 +62,11 @@ var config = {
     //内存和打包静态文件访问目录，以index.html为准,最好以斜杠/结尾，要不有意想不到的bug
     //因为有些网站访问web app不是在根目录，可能是根目录中的的文件夹，prefixURL是用来设置这种情况的
     //例如`/demo`，访问网站根目录demo文件中的web app
-    publicPath: `${cwdPackageJsonConfig.prefixURL}` || '/',
+    publicPath: `${cwdPackageJsonConfig.prefixURL}/` || '/',
     //定义require.ensure文件名
     chunkFilename: 'static/js/[name]-[id]-[chunkHash].chunk.js',
     libraryTarget: 'var',
-    sourceMapFilename: '[file].map'
+    sourceMapFilename: '[file].map',
   },
   module: {
     rules: [
@@ -75,8 +75,8 @@ var config = {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader', postcssLoaderConfig]
-        })
+          use: ['css-loader', postcssLoaderConfig],
+        }),
       },
       //字体等要经过file-loader提取到指定目录
       {
@@ -95,12 +95,12 @@ var config = {
           /\.jpe?g$/,
           /\.png$/,
           /\.svg$/,
-          /\.webp$/
+          /\.webp$/,
         ],
         loader: 'file-loader',
         options: {
-          name: 'static/media/[name].[hash:8].[ext]'
-        }
+          name: 'static/media/[name].[hash:8].[ext]',
+        },
       },
       //limit是base64转换最大限制，小于设置值，都会转为base64格式
       //name是在css中提取图片的命名方式
@@ -111,24 +111,24 @@ var config = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: 'static/media/[name].[hash].[ext]'
-        }
+          name: 'static/media/[name].[hash].[ext]',
+        },
       },
       {
         //匹配.js或.jsx后缀名的文件
         test: /\.js[x]?$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
   externals: {},
   resolve: {
     alias: {
-      src: paths.src
+      src: paths.src,
     },
     //不可留空字符串
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
@@ -145,13 +145,13 @@ var config = {
         keepClosingSlash: true,
         minifyJS: true,
         minifyCSS: true,
-        minifyURLs: true
-      }
+        minifyURLs: true,
+      },
     }),
     new webpack.DefinePlugin({
       'process.env.PREFIX_URL': JSON.stringify(cwdPackageJsonConfig.prefixURL),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'process.env.useImmutable': JSON.stringify(useImmutable)
+      'process.env.useImmutable': JSON.stringify(useImmutable),
     }),
     // This helps ensure the builds are consistent if source hasn't changed:
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -159,23 +159,23 @@ var config = {
       // optionally pass test, include and exclude, default affects all loaders
       test: /\.css|.js|.jsx|.scss$/,
       minimize: true,
-      debug: false
+      debug: false,
     }),
     new webpack.optimize.UglifyJsPlugin({
       minimize: true,
       sourceMap: true,
       compress: {
-        warnings: false
-      }
+        warnings: false,
+      },
     }),
     new ExtractTextPlugin({
       filename: 'static/css/styles.css?hash=[hash]',
       //最好true,要不后面加上sass-loader等时，会出现css没有提取的现象
-      allChunks: true
+      allChunks: true,
     }),
     new ProgressBarPlugin(),
-    new CaseSensitivePathsPlugin()
-  ]
+    new CaseSensitivePathsPlugin(),
+  ],
 };
 //使用sass配置
 if (useSass) {
@@ -183,8 +183,8 @@ if (useSass) {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract({
       fallback: 'style-loader',
-      use: ['css-loader', postcssLoaderConfig, 'sass-loader']
-    })
+      use: ['css-loader', postcssLoaderConfig, 'sass-loader'],
+    }),
   });
 }
 //使用sass配置
@@ -193,8 +193,8 @@ if (useLess) {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract({
       fallback: 'style-loader',
-      use: ['css-loader', postcssLoaderConfig, 'less-loader']
-    })
+      use: ['css-loader', postcssLoaderConfig, 'less-loader'],
+    }),
   });
 }
 

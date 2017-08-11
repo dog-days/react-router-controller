@@ -1,37 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { getViewConfig } from './';
+import { getViewConfig, pathnameAdapter } from './';
 import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
 
 /**
- * url适配
- * 例如url=test或者test/或者/test/会适配为/test
- */
-export function urlPathAdapter(basename) {
-  if (!basename) {
-    return;
-  }
-  if (Object.prototype.toString.apply(basename) !== '[object String]') {
-    console.error('请传入字符串！');
-    return;
-  }
-  //basename第一个字符必须是'/'
-  if (basename[0] !== '/') {
-    basename = '/' + basename;
-  }
-  //basename最后一个字符不能是'/'
-  if (basename[basename.length - 1] === '/') {
-    basename = basename.slice(0, basename.length - 1);
-  }
-  return basename;
-}
-
-/**
  * 路由控制器React组件，配合Router使用
- *@prop { string } history history类型hash、browser
- *@prop { string } basename 同BrowserRouter的props.basename
+ *@prop { string } historyType history类型hash、browser、memory，目前还没使用到，保留
  *@state { object } config 路由的一些配置
  *@this { string } pathname 相当与上个页面的pathname，切换页面会变化。
  */
@@ -46,23 +22,12 @@ class RouteController extends React.Component {
     }).isRequired,
   };
   state = {};
-  basename = urlPathAdapter(this.props.basename);
   /**
    * 根据history的值获取pathname
    */
   getPathNameByHistory() {
-    const { history } = this.props;
-    var basename = this.basename;
-    var pathname = location.pathname;
-    if (history === 'hash') {
-      pathname = location.hash.replace('#', '');
-    } else if (history === 'memory') {
-      const history = this.context.router.history;
-      pathname = history.location.pathname;
-    }
-    if (basename) {
-      pathname = pathname.replace(basename, '');
-    }
+    const history = this.context.router.history;
+    var pathname = history.location.pathname;
     if (pathname === '') {
       pathname = '/';
     }
@@ -184,7 +149,10 @@ class RouteController extends React.Component {
         {false &&
           pathname === '/' &&
           ControllerConfig.indexPath &&
-          <Redirect from="/" to={urlPathAdapter(ControllerConfig.indexPath)} />}
+          <Redirect
+            from="/"
+            to={pathnameAdapter(ControllerConfig.indexPath)}
+          />}
       </Switch>
     );
   }

@@ -10,7 +10,7 @@ class MemoryRouterController extends React.Component {
     const { basename, hot } = this.props;
     return (
       <MemoryRouter {...this.props}>
-        <RouteController history="memory" basename={basename} hot={hot} />
+        <RouteController historyType="memory" basename={basename} hot={hot} />
       </MemoryRouter>
     );
   }
