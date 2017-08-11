@@ -56,12 +56,15 @@ class RouteController extends React.Component {
     var pathname = location.pathname;
     if (history === 'hash') {
       pathname = location.hash.replace('#', '');
+    } else if (history === 'memory') {
+      const history = this.context.router.history;
+      pathname = history.location.pathname;
     }
     if (basename) {
       pathname = pathname.replace(basename, '');
-      if (pathname === '') {
-        pathname = '/';
-      }
+    }
+    if (pathname === '') {
+      pathname = '/';
     }
     return pathname;
   }
