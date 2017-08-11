@@ -32,6 +32,8 @@ Controller.set({
 });
 
 export default function container(props) {
+  //basename的设置需要配合webpack使用，要不即使在开发环境没问题，但是成产环境
+  //访问根目录的basename文件夹（文件名为basename的值），会有问题的。
   return (
     <BrowserRouterController
       basename={process.env.PREFIX_URL}
