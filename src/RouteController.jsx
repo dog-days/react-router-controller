@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { getViewConfig, pathnameAdapter } from './';
+import { getParams, pathnameAdapter } from './util';
 import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
 
@@ -33,9 +33,32 @@ class RouteController extends React.Component {
     }
     return pathname;
   }
+  /**
+   * 获取页面配置提供给react-router使用，动态路由。
+   *@param {string} pathanme react router中的location.pathname || location.hash，不是浏览器的location
+   */
+  getViewConfig(pathname) {
+    var params = getParams(pathname);
+    var controllerId = params.controllerId;
+    var viewId = params.viewId;
+    var funcName = viewId + 'View';
+    return ControllerConfig.readControllerFile(
+      controllerId
+    ).then(controller => {
+      if (!controller) {
+        return false;
+      }
+      var contollerObj = new controller();
+      if (!contollerObj[funcName]) {
+        return false;
+      }
+      var config = contollerObj[funcName](params);
+      return config;
+    });
+  }
   setConfig() {
     var pathname = this.getPathNameByHistory();
-    getViewConfig(pathname).then(config => {
+    this.getViewConfig(pathname).then(config => {
       if (!config && pathname === '/') {
         const history = this.context.router.history;
         history.replace(ControllerConfig.indexPath);

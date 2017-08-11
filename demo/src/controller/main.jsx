@@ -1,4 +1,4 @@
-import Controller from '../../../src/Controller';
+import Controller from 'react-router-controller';
 import LayoutComponent from '../view/layout/main';
 
 export default class MainController extends Controller {

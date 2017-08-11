@@ -125,7 +125,10 @@ var config = {
   externals: {},
   resolve: {
     alias: {
+      //这里是demo/src
       src: paths.src,
+      //这里是./src
+      'react-router-controller': path.resolve('src'),
     },
     //不可留空字符串
     extensions: ['.js', '.jsx'],

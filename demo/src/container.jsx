@@ -1,6 +1,5 @@
 import React from 'react';
-import Controller from './../../src/Controller';
-import BrowserRouterController from './../../src/BrowserRouterController';
+import Controller, { BrowserRouterController } from 'react-router-controller';
 import nopage from './view/nopage';
 
 Controller.set({
