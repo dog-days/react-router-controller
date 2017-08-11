@@ -70,7 +70,7 @@ class RouteController extends React.Component {
     getViewConfig(pathname).then(config => {
       if (!config && pathname === '/') {
         const history = this.context.router.history;
-        history.push(ControllerConfig.indexPath);
+        history.replace(ControllerConfig.indexPath);
         return false;
       }
       var lastConfig;
