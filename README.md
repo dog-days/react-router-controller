@@ -33,11 +33,11 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
   ```json
   {
-    controllerId: 'main',
-    viewId: 'about',
-    id: '100',
-    appid: 'test',
-    page: '2'
+    controllerId: "main",
+    viewId: "about",
+    id: "100",
+    appid: "test",
+    page: "2"
   }
   ```
 
@@ -264,6 +264,10 @@ export default IndexView;
   | config        | object | 一些配置{title: '标题',breadcrumbs:['面包屑']}，还可以自定义。 | true  |
   | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true  |
   | ViewComponent | object | react view 组件，如果存在，覆盖默认的。                | false |
+
+- LayoutComponent
+
+  设置layout组件，不设置就没layout。
 
 - checkParams(params, paramsSetting)
 
