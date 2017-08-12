@@ -19,7 +19,7 @@ export default class Contoller {
     ControllerConfig = config;
   }
   /**
-   * 根据传进来的参数，检查url的params是否符合要求，controller指定的格式
+   * 根据传进来的参数，检查url的params是否符合controller指定的格式
    * @param { object } params eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu'}
    * @param { array } paramsSetting eg. ['id','appid']
    */
@@ -59,8 +59,8 @@ export default class Contoller {
   /**
    * @param {object} config 一些配置
    * @param {object} params 路由配置参数
-   * @param {object} ViewComponent react view 组件，如果存在，覆盖默认的。
    * eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
+   * @param {object} ViewComponent react view 组件，如果存在，覆盖默认的。
    */
   render(config, params = {}, ViewComponent) {
     if (!ControllerConfig.readControllerFile) {
