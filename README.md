@@ -13,7 +13,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
 ### 缺点
 
-用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定于的controller模式（非常简单的模式）。
+用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定的controller模式（非常简单的模式）。
 
 ### 使用规范
 
@@ -40,6 +40,59 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
     page: '2'
   }
   ```
+
+#### Controller规范
+
+- controller文件查找会根据上面的URL规范返回的controllerId，查找到设置的目录文件（会根据controllerId去查找文件，当然不是真实的文件查找，如果用webpack，webpack会帮你把文件关系一一对应起来）。例如建议这样设置controller文件（Controller.set用法请查看下面的Controller基类API）：
+
+  ```js
+  Controller.set({
+    readControllerFile(controllerId) {
+      //webpackMode: eager是使import变为不异步，跟require一样，
+      //但是返回的时promise对象，不能使用require，require会把没必要的文件载入
+      //最好不使用异步载入，可能导致一些问题
+      return import(/* webpackMode: "eager" */
+      `./controller/${controllerId}.js`)
+        .then(controller => {
+          return controller.default;
+        })
+        .catch(e => {
+          //必须catch并返回false
+          return false;
+        });
+    }
+  });
+  ```
+
+  上面使用webpack 3.x以上的import方式，import会把前面的整个`./controller`文件夹的所有文件做了一个映射，然后通过controllerId就可以import到指定文件。
+
+- controller 渲染view组件规范
+
+  **view函数=viewId+View，即xxxxView(){}。**
+
+  先看下代码：
+
+  ```js
+  import Controller from 'react-router-controller';
+  import LayoutComponent from '../view/layout/main';
+
+  export default class MainController extends Controller {
+    LayoutComponent = LayoutComponent;
+    aboutView(params) {
+      return this.render(
+        {
+          title: '关于',
+          breadcrumbs: [],
+        },
+        params
+      );
+    }
+  }
+  ```
+
+  像上面的controller中aboutView方法运行的pathname为`/main/about`。首先main先找到`./controller/main.js`文件，如果不存在返回404页面。存在就继续找view函数，然后运行view函数，否则返回404页面。
+
+  ​
 
 ### 使用入门
 
@@ -83,25 +136,22 @@ view和controller的目录在Controller.set中设置。
 
 ```js
 import React from 'react';
-import Controller from './../../src/Controller';
-import BrowserRouterController from './../../src/BrowserRouterController';
+import Controller, { BrowserRouterController } from 'react-router-controller';
 import nopage from './view/nopage';
 
 Controller.set({
   readViewFile(viewId) {
     //view可以异步载入
-    return import(
-    `./view/${viewId}/index.jsx`).then(component => {
+    return import(`./view/${viewId}/index.js`).then(component => {
       return component.default;
     });
-    //这里当然可以使用switch一个一个设置匹配，但是不建议。
   },
   readControllerFile(controllerId) {
     //webpackMode: eager是使import变为不异步，跟require一样，
     //但是返回的时promise对象，不能使用require，require会把没必要的文件载入
     //最好不适用异步载入，可能导致一些问题
     return import(/* webpackMode: "eager" */
-    `./controller/${controllerId}.jsx`)
+    `./controller/${controllerId}.js`)
       .then(controller => {
         return controller.default;
       })
@@ -110,15 +160,23 @@ Controller.set({
         return false;
       });
   },
+  
   //设置404页面，会覆盖默认的404页面
   NotMatchComponent: nopage,
   //设置首页path（跳转路径，即react-router path='/'时，会跳转到indexPath）
   //第一个字符必须是'/'，不能是main/index，要是绝对的路径
-  indexPath: '/main/index'
+  indexPath: '/main/index',
 });
 
 export default function container(props) {
-  return <BrowserRouterController hot={props.hot} />;
+  //basename的设置需要配合webpack使用，要不即使在开发环境没问题，但是成产环境
+  //访问根目录的basename文件夹（文件名为basename的值），会有问题的。
+  return (
+    <BrowserRouterController
+      basename={process.env.PREFIX_URL}
+      hot={props.hot}
+    />
+  );
 }
 ```
 
@@ -129,37 +187,28 @@ export default function container(props) {
 规范后续会说明，在xxxView按照下面的格式就会渲染出复合规则的view页面。
 
 ```js
-import Controller from '../../../src/Controller';
+import Controller from 'react-router-controller';
 import LayoutComponent from '../view/layout/main';
 
 export default class MainController extends Controller {
-  //layout组件设置
   LayoutComponent = LayoutComponent;
-  //这里渲染了view/index/index.js
   indexView(params) {
     return this.render(
-      params.viewId,
       {
         title: '主页',
         breadcrumbs: [],
-        actions: true,
       },
       params
     );
   }
-  //这里渲染了view/about/index.js
   aboutView(params) {
-    //只要返回fasle就是404页面
-    //这里做了一些路由参数验证
     if (!this.checkParams(params, ['id'])) {
       return false;
     }
     return this.render(
-      params.viewId,
       {
         title: '关于',
         breadcrumbs: [],
-        actions: true,
       },
       params
     );
@@ -192,28 +241,38 @@ export default IndexView;
 
 每新建一个controller都必须继承这个基类，这个类提供了一些方法：
 
-- render
+- set(config)
 
-  ```js
-  /**
-   * @param {string} viewId view文件夹下的文件夹名，view下需要遵守命名规则
-   * @param {object} config 一些配置
-   * @param {object} params 路由配置参数
-   * eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
-   */
-  render(viewId, config, params) {}
-  ```
+  **使用react-router-controller必须先用set配置**，可以参考demo。
 
-- checkParms
+  config.xx
 
-  ```js
-  /**
-   * 根据传进来的参数，检查url的params是否符合要求，controller指定的格式
-   * @param { object } params eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu'}
-   * @param { array } paramsSetting eg. ['id','appid']
-   */
-  checkParams(params, paramsSetting) {}
-  ```
+  | config.xx                        | 类型       | 说明                                       | 必填    |
+  | -------------------------------- | -------- | ---------------------------------------- | ----- |
+  | readControllerFile(controllerId) | function | 读取controller文件                           | true  |
+  | readViewFile(viewId)             | function | 读取view组件文件                               | false |
+  | NotMatchComponent                | object   | react view 组件，404页面                      | false |
+  | indexPath                        | string   | 设置主页（因为controller规范原因，不存在'/'这种的pathname，格式都是/controllerId/viewId/paramsId/1），'/'会跳转到这个indexPath。 | true  |
+
+
+- render(viewId, config, params) 
+
+  名字叫render，实际是还没渲染，只是返回传递了一个对象到react-router中使用。
+
+  | 参数（param）     | 类型     | 说明                                       | 必填    |
+  | ------------- | ------ | ---------------------------------------- | ----- |
+  | config        | object | 一些配置{title: '标题',breadcrumbs:['面包屑']}，还可以自定义。 | true  |
+  | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true  |
+  | ViewComponent | object | react view 组件，如果存在，覆盖默认的。                | false |
+
+- checkParams(params, paramsSetting)
+
+  根据传进来的参数，检查url的params是否符合controller指定的格式。
+
+  | 参数（param）     | 类型     | 说明                                       | 必填    |
+  | ------------- | ------ | ---------------------------------------- | ----- |
+  | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true  |
+  | paramsSetting | array  | react-router参数，如['id','appid']（/main/about/:id/:appid） | false |
 
 #### BrowserRouterController
 
@@ -228,7 +287,6 @@ ReactDOM.render(<BrowserRouter />, document.getElementById('root'));
 | props       | 说明                                       | 默认值  |
 | ----------- | ---------------------------------------- | ---- |
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
-| basename    | 用法跟react-router中BrowserRouter的props.basename一样，发布的文件不在网站根目录，而在根目录文件下可以使用basename处理。如果使用webpack这个当然还要进行webpack的处理，要不webpack打包的静态文件访问路径会有问题，这里不说。 | 无    |
 | other.props | 继承react-router中BrowserRouter的所用props。    | 无    |
 
 #### HashRouterController
@@ -244,7 +302,6 @@ ReactDOM.render(<HashRouter />, document.getElementById('root'));
 | props       | 说明                                       | 默认值  |
 | ----------- | ---------------------------------------- | ---- |
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
-| basename    | 用法跟react-router中HashRouter的props.basename一样，发布的文件不在网站根目录，而在根目录文件下可以使用basename处理。如果使用webpack这个当然还要进行webpack的处理，要不webpack打包的静态文件访问路径会有问题，这里不说。 | 无    |
 | other.props | 继承react-router中HashRouter的所用props。       | 无    |
 
 #### MemoryRouterController
@@ -260,7 +317,6 @@ ReactDOM.render(<MemoryRouter />, document.getElementById('root'));
 | props       | 说明                                       | 默认值  |
 | ----------- | ---------------------------------------- | ---- |
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
-| basename    | 用法跟react-router中MemoryRouter的props.basename一样，只是做了一些处理。，发布的文件不在网站根目录，而在根目录文件下可以使用basename处理。如果使用webpack这个当然还要进行webpack的处理，要不webpack打包的静态文件访问路径会有问题，这里不说。 | 无    |
 | other.props | 继承react-router中MemoryRouter的所用props。     | 无    |
 
 #### 
