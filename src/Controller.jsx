@@ -1,6 +1,8 @@
 import React from 'react';
 //基本的配置，会在当前类和./index.jsx中使用。
 export var ControllerConfig = {};
+//所有view是否是第一次载入状态
+const allViewFirstLoad = {};
 /**
  * url风格定义如下，跟php框架的Yii一致，例如：
  * pathname=/main/about/id/100/appid/aiermu
@@ -92,9 +94,18 @@ export default class Contoller {
       return returnConfig;
     } else {
       var viewId = params.viewId;
+      //--begin view组件是否是第一次载入
+      var firstLoad = allViewFirstLoad[viewId];
+      if (allViewFirstLoad[viewId] === undefined) {
+        //为undefined就是第一次载入
+        firstLoad = true;
+      }
+      //--end view组件是否是第一次载入
       return (
         ControllerConfig.readViewFile &&
-        ControllerConfig.readViewFile(viewId).then(ViewComponent => {
+        ControllerConfig.readViewFile(viewId, firstLoad).then(ViewComponent => {
+          //标记view组件第一次已经载入
+          allViewFirstLoad[viewId] = false;
           return Object.assign({}, returnConfig, {
             component: props => {
               return <ViewComponent {...props} {...newProps} />;

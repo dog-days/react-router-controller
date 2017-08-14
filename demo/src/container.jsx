@@ -3,7 +3,8 @@ import Controller, { BrowserRouterController } from 'react-router-controller';
 import nopage from './view/nopage';
 
 Controller.set({
-  readViewFile(viewId) {
+  readViewFile(viewId, firstLoad) {
+    console.debug(firstLoad);
     //view可以异步载入
     return import(`./view/${viewId}/index.jsx`).then(component => {
       return component.default;

@@ -6,20 +6,20 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
 > 这个路由从始至终都只运行了一个路由配置，因为这个路由是动态的，不存在同时存在其他路由配置。
 
-### 为什么要使用这个
+## 为什么要使用这个
 
 - 无路由配置，使用起来简单多了。
 - 后端控制器模式（MVC中的C），思路简单明了，专心于业务逻辑即可。
 
-### 缺点
+## 缺点
 
 用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定的controller模式（非常简单的模式）。
 
-### 使用规范
+## 使用规范
 
 就像PHP Yii一样（90%相似），react-router-controller也有自己的规范。
 
-#### URL规范
+### URL规范
 
 跟Yii基本一致，处理没有module这分类。
 
@@ -41,7 +41,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
   }
   ```
 
-#### Controller规范
+### Controller规范
 
 - controller文件查找会根据上面的URL规范返回的controllerId，查找到设置的目录文件（会根据controllerId去查找文件，当然不是真实的文件查找，如果用webpack，webpack会帮你把文件关系一一对应起来）。例如建议这样设置controller文件（Controller.set用法请查看下面的Controller基类API）：
 
@@ -49,7 +49,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
   Controller.set({
     readControllerFile(controllerId) {
       //webpackMode: eager是使import变为不异步，跟require一样，
-      //但是返回的时promise对象，不能使用require，require会把没必要的文件载入
+      //但是返回的是promise对象，不能使用require，require会把没必要的文件载入
       //最好不使用异步载入，可能导致一些问题
       return import(/* webpackMode: "eager" */
       `./controller/${controllerId}.js`)
@@ -92,9 +92,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
   像上面的controller中aboutView方法运行的pathname为`/main/about`。首先main先找到`./controller/main.js`文件，如果不存在返回404页面。存在就继续找view函数，然后运行view函数，否则返回404页面。
 
-  ​
-
-### 使用入门
+## 使用入门
 
 使用create-react-app，创建一个demo app，下面的范例以这个app为基础来处理。例子可以看项目中的demo文件夹（这个demo不是用create-react-app创建的）。
 
@@ -233,9 +231,9 @@ class IndexView extends React.Component {
 export default IndexView;
 ```
 
-### API说明
+## API说明
 
-#### Controller基类
+### Controller基类
 
 `import Controller from 'react-router-controller'`
 
@@ -245,15 +243,27 @@ export default IndexView;
 
   **使用react-router-controller必须先用set配置**，可以参考demo。
 
-  config.xx
+  **config.xx**
 
-  | config.xx                        | 类型       | 说明                                       | 必填    |
-  | -------------------------------- | -------- | ---------------------------------------- | ----- |
-  | readControllerFile(controllerId) | function | 读取controller文件                           | true  |
-  | readViewFile(viewId)             | function | 读取view组件文件                               | false |
-  | NotMatchComponent                | object   | react view 组件，404页面                      | false |
-  | indexPath                        | string   | 设置主页（因为controller规范原因，不存在'/'这种的pathname，格式都是/controllerId/viewId/paramsId/1），'/'会跳转到这个indexPath。 | true  |
+  | config.xx          | 类型       | 说明                                       | 必填    |
+  | ------------------ | -------- | ---------------------------------------- | ----- |
+  | readControllerFile | function | 读取controller文件，必须返回promise对象。            | true  |
+  | readViewFile       | function | 读取view组件文件，必须返回promise对象。                | false |
+  | NotMatchComponent  | object   | react view 组件，404页面。                     | false |
+  | indexPath          | string   | 设置主页（因为controller规范原因，不存在'/'这种的pathname，格式都是/controllerId/viewId/paramsId/1），'/'会跳转到这个indexPath。 | true  |
 
+  **config.readControllerFile(controllerId)**
+
+  | 参数（param）    | 类型     | 说明                           | 必填   |
+  | ------------ | ------ | ---------------------------- | ---- |
+  | controllerId | string | 控制器文件名id，通过解析url得到，怎样使用看使用者。 | true |
+
+  **config.readViewFile(viewId,firstLoad)**
+
+  | 参数（param） | 类型      | 说明                                       | 必填    |
+  | --------- | ------- | ---------------------------------------- | ----- |
+  | viewId    | string  | view文件名id，通过解析url得到，怎样使用看使用者。            | true  |
+  | firstLoad | boolean | 判断当前函数，view文件是否是第一次载入（false未载入，true是载入），使用者或许可能用到。 | false |
 
 - render(viewId, config, params) 
 
@@ -278,7 +288,7 @@ export default IndexView;
   | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true  |
   | paramsSetting | array  | react-router参数，如['id','appid']（/main/about/:id/:appid） | false |
 
-#### BrowserRouterController
+### BrowserRouterController
 
 对react-router-dom中的`<BrowserRouter />`进行controller封装，里面会根据url渲染对应的页面。
 
@@ -293,7 +303,7 @@ ReactDOM.render(<BrowserRouter />, document.getElementById('root'));
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
 | other.props | 继承react-router中BrowserRouter的所用props。    | 无    |
 
-#### HashRouterController
+### HashRouterController
 
 对react-router-dom中的`<HashRouter />`进行controller封装，里面会根据url渲染对应的页面。
 
@@ -308,7 +318,7 @@ ReactDOM.render(<HashRouter />, document.getElementById('root'));
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
 | other.props | 继承react-router中HashRouter的所用props。       | 无    |
 
-#### MemoryRouterController
+### MemoryRouterController
 
 对react-router-dom中的`<MemoryRouter />`进行controller封装，里面会根据内存渲染对应的页面。
 
