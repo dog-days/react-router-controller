@@ -106,11 +106,10 @@ export default class Contoller {
         ControllerConfig.readViewFile(viewId, firstLoad).then(ViewComponent => {
           //标记view组件第一次已经载入
           allViewFirstLoad[viewId] = false;
-          return Object.assign({}, returnConfig, {
-            component: props => {
-              return <ViewComponent {...props} {...newProps} />;
-            },
-          });
+          returnConfig.component = props => {
+            return <ViewComponent {...props} {...newProps} />;
+          };
+          return returnConfig;
         })
       );
     }
