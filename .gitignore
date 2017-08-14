@@ -2,6 +2,7 @@
 .vscode/
 node_modules/
 libs/
+es/
 build/
 .DS_Store
 *.tgz

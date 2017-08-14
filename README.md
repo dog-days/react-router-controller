@@ -16,7 +16,25 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
 ## 缺点
 
-用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定的controller规范（非常简单的规范）。
+用这个当然会有点限制，不能自定义路由（定义路由需要遵循controller规范，页面内部的多级动态路由不影响，可以随意定，但是不建议使用子路由）。
+
+## 兼容性
+
+一般主流浏览器都兼容。
+
+- chrome浏览器最新版
+
+- 火狐浏览器最新版
+
+- Edge浏览器最新版
+
+- IE浏览器支持IE9版本以上（包括IE9）
+
+  因为IE不支持promise，所以需要引入polypill.js。
+
+  ```js
+  import 'react-router-controller/polyfill'
+  ```
 
 ## 使用规范
 
@@ -108,8 +126,11 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 > 这个入口文件如果使用了热替换，需要在`module.hot.accept`中把hot（需要使用随机数，保证每次热替换hot值都不一样）参数传到`<Container />`的prop.hot中，这样react-router-controller的热替换才会生效。
 
 ```js
+//为了兼容IE的promise请加上polyfill
+import 'react-router-controller/polyfill'
 import React from 'react';
 import { render } from 'react-dom';
+//使用react-hot-loader需要一个Container，可以参考react-hot-loader例子。
 import Container from './container';
 
 function randomKey() {
