@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { getParams, pathnameAdapter } from './util';
 import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
@@ -179,7 +179,7 @@ class RouteController extends React.Component {
       };
     }
     return (
-      <Switch>
+      <span>
         {pathname !== '/' &&
           config &&
           config.LayoutComponent &&
@@ -197,7 +197,7 @@ class RouteController extends React.Component {
             from="/"
             to={pathnameAdapter(ControllerConfig.indexPath)}
           />}
-      </Switch>
+      </span>
     );
   }
 }
