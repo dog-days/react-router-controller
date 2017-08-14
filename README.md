@@ -8,12 +8,15 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
 ## 为什么要使用这个
 
-- 无路由配置，使用起来简单多了。
-- 后端控制器模式（MVC中的VC，React是View，再配合redux或者mobx就是MVC模式了），思路简单明了，专心于业务逻辑即可。
+- 无路由配置
+
+- 后端控制器模式
+
+  react-router-controller是MVC中的VC，React是View，Controller是C，再配合redux或者mobx就是MVC模式了。思路简单明了，专心于业务逻辑即可。
 
 ## 缺点
 
-用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定的controller模式（非常简单的模式）。
+用这个当然会有点限制，不能自定义路由（页面内部的动态路由不影响，影响了外层的），而且还要遵循，我们定的controller规范（非常简单的规范）。
 
 ## 使用规范
 
@@ -40,6 +43,8 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
     page: "2"
   }
   ```
+
+  对应的路由path为`/main/about/:id/:appid/:page`，这个跟PHP Yii的参数是一致的。
 
 ### Controller规范
 
@@ -283,10 +288,10 @@ export default IndexView;
 
   根据传进来的参数，检查url的params是否符合controller指定的格式。
 
-  | 参数（param）     | 类型     | 说明                                       | 必填    |
-  | ------------- | ------ | ---------------------------------------- | ----- |
-  | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true  |
-  | paramsSetting | array  | react-router参数，如['id','appid']（/main/about/:id/:appid） | false |
+  | 参数（param）     | 类型     | 说明                                       | 必填   |
+  | ------------- | ------ | ---------------------------------------- | ---- |
+  | params        | object | pathname解析后的参数如， {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' } | true |
+  | paramsSetting | array  | react-router参数，如['id','appid']（/main/about/:id/:appid） | true |
 
 ### BrowserRouterController
 
