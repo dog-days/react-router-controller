@@ -9,7 +9,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 ## 为什么要使用这个
 
 - 无路由配置，使用起来简单多了。
-- 后端控制器模式（MVC中的C），思路简单明了，专心于业务逻辑即可。
+- 后端控制器模式（MVC中的VC，React是View，再配合redux或者mobx就是MVC模式了），思路简单明了，专心于业务逻辑即可。
 
 ## 缺点
 
@@ -295,7 +295,7 @@ export default IndexView;
 用法如下：
 
 ```jsx
-ReactDOM.render(<BrowserRouter />, document.getElementById('root'));
+ReactDOM.render(<BrowserRouterController />, document.getElementById('root'));
 ```
 
 | props       | 说明                                       | 默认值  |
@@ -310,7 +310,7 @@ ReactDOM.render(<BrowserRouter />, document.getElementById('root'));
 用法如下：
 
 ```jsx
-ReactDOM.render(<HashRouter />, document.getElementById('root'));
+ReactDOM.render(<HashRouterController />, document.getElementById('root'));
 ```
 
 | props       | 说明                                       | 默认值  |
@@ -325,7 +325,7 @@ ReactDOM.render(<HashRouter />, document.getElementById('root'));
 用法如下：
 
 ```jsx
-ReactDOM.render(<MemoryRouter />, document.getElementById('root'));
+ReactDOM.render(<MemoryRouterController />, document.getElementById('root'));
 ```
 
 | props       | 说明                                       | 默认值  |
