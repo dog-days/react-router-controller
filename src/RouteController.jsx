@@ -5,6 +5,8 @@ import { getParams, pathnameAdapter } from './util';
 import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
 
+//controller实例化存储，已实例化的controller，从这里取出来，key值是controllerId
+const controllerNewObjs = {};
 /**
  * 路由控制器React组件，配合Router使用
  *@prop { string } historyType history类型hash、browser、memory，目前还没使用到，保留
@@ -34,8 +36,8 @@ class RouteController extends React.Component {
     return pathname;
   }
   /**
-   * 获取页面配置提供给react-router使用，动态路由。
-   *@param {string} pathanme react router中的location.pathname || location.hash，不是浏览器的location
+   * 获取页面配置提供给react-router使用，这里是关键的一部。
+   *@param {string} pathanme react-router中的history的location.pathname || location.hash，不是浏览器的location
    */
   getViewConfig(pathname) {
     var params = getParams(pathname);
@@ -48,7 +50,14 @@ class RouteController extends React.Component {
       if (!controller) {
         return false;
       }
-      var contollerObj = new controller();
+      //这里同一个controller只实例化一次
+      var contollerObj;
+      if (controllerNewObjs[controllerId]) {
+        contollerObj = controllerNewObjs[controllerId];
+      } else {
+        contollerObj = new controller();
+        controllerNewObjs[controllerId] = contollerObj;
+      }
       if (!contollerObj[funcName]) {
         return false;
       }
@@ -66,27 +75,6 @@ class RouteController extends React.Component {
       }
       var lastConfig;
       if (config && config.component) {
-        //console.error('controller的render方法传入的ViewComponent不是React组件！');
-        //lastConfig = {
-        //component: props => {
-        //return (
-        //<div
-        //style={{
-        //border: '1px solid #fcdbd9',
-        //backgroundColor: '#fef0ef',
-        //padding: '11px 48px 8px 16px',
-        //borderRadius: '4px',
-        //fontSize: '13px',
-        //lineHeight: '1.5',
-        //color: 'rgba(0,0,0,.65)'
-        //}}
-        //>
-        //controler render方法传入的ViewComponent 不是React组件！
-        //</div>
-        //);
-        //}
-        //};
-        //document.title = 'ViewComponent is not valid react component.';
         lastConfig = config;
       } else {
         //如果config为false，为404页面
