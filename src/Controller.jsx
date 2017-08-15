@@ -70,7 +70,7 @@ export default class Contoller {
     }
     //begin--页面title设置
     if (this.suffixTitle) {
-      config.title += this.suffixTtile;
+      config.title += this.suffixTitle;
     }
     document.title = config.title;
     config.params = params;

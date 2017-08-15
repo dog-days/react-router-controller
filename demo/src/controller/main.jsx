@@ -3,6 +3,7 @@ import LayoutComponent from '../view/layout/main';
 
 export default class MainController extends Controller {
   LayoutComponent = LayoutComponent;
+  suffixTitle = '-test';
   indexView(params) {
     console.debug(this.test);
     return this.render(
