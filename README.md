@@ -263,7 +263,9 @@ export default IndexView;
 
 `import Controller from 'react-router-controller'`
 
-每新建一个controller都必须继承这个基类，这个类提供了一些方法：
+每新建一个controller都必须继承这个基类，**controller中xxView之间可以使用类变量通讯。**
+
+`Controller`这个类提供了一些方法和变量：
 
 - set(config)
 
@@ -293,7 +295,7 @@ export default IndexView;
 
 - render(viewId, config, params) 
 
-  名字叫render，实际是还没渲染，只是返回传递了一个对象到react-router中使用。
+  每个xxView函数都要用到，名字虽然叫render，实际是还没渲染，只是返回传递了一个对象到react-router中使用。
 
   | 参数（param）     | 类型     | 说明                                       | 必填    |
   | ------------- | ------ | ---------------------------------------- | ----- |
@@ -304,6 +306,10 @@ export default IndexView;
 - LayoutComponent
 
   设置layout组件，不设置就没layout。
+
+- suffixTtile
+
+  设置后缀title，可选。
 
 - checkParams(params, paramsSetting)
 
@@ -359,7 +365,43 @@ ReactDOM.render(<MemoryRouterController />, document.getElementById('root'));
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
 | other.props | 继承react-router中MemoryRouter的所用props。     | 无    |
 
-#### 
+### Layou组件
+
+使用者传进来的layout组件，react-router-controller会为这个组件添加以下props:
+
+- params
+
+  例如`http://localhost/main/about/id/10`的param如下：
+
+  ```js
+  {controllerId: 'main',viewId: 'about',id: 10}
+  ```
+
+- breadcrumbs
+
+  格式随意定，从Controller的render方法第一个参数传进来。
+
+- viewConfig
+
+  所有的view配置，包括title、breadcrumbs和一些自定义的配置，看情况使用，大多数情况用不到的。
+
+### View组件
+
+使用者传进来的layout组件，react-router-controller会为这个组件添加以下props:
+
+- params
+
+  同Layout组件。
+
+- title
+
+  页面title设置。
+
+- viewConfig
+
+  同Layout组件。
+
+  ​
 
 
 
