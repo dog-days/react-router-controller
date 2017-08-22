@@ -23,6 +23,7 @@ class RouteController extends React.Component {
       staticContext: PropTypes.object,
     }).isRequired,
   };
+  displayName = 'RouteController';
   state = {};
   /**
    * 根据history的值获取pathname
@@ -70,6 +71,8 @@ class RouteController extends React.Component {
     this.getViewConfig(pathname).then(config => {
       if (!config && pathname === '/') {
         const history = this.context.router.history;
+        //这里需要赋值
+        this.pathname = '/';
         history.replace(ControllerConfig.indexPath);
         return false;
       }
@@ -133,6 +136,7 @@ class RouteController extends React.Component {
     var pathname = this.getPathNameByHistory();
     if (this.pathname === undefined) {
       //兼容react-router中页面重载，在safari中这里会运行多一次的问题
+      //BrowserHistory有bug，safari中会刷新页面不应该触发监听的。
       return;
     }
     const { hot } = nextProps;

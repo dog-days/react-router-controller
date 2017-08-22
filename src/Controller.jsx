@@ -64,7 +64,10 @@ export default class Contoller {
    * eg. {contollerId: 'main',viewId: 'about',id: "100",appid: 'aiermu' }
    * @param {object} ViewComponent react view 组件，如果存在，覆盖默认的。
    */
-  render(config, params = {}, ViewComponent) {
+  render(config, params, ViewComponent) {
+    if (!params) {
+      console.error('Controller render: 第二参数params参数是必填项！');
+    }
     if (!ControllerConfig.readControllerFile) {
       console.error('请先配置Controller的controller文件夹和view文件夹的路径读取方法！');
     }

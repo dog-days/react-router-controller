@@ -6,6 +6,7 @@ import RouteController from './RouteController';
  * MemoryRouter类型控制器
  */
 class MemoryRouterController extends React.Component {
+  displayName = 'MemoryRouterController';
   render() {
     const { basename, hot } = this.props;
     return (

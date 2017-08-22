@@ -6,6 +6,7 @@ import RouteController from './RouteController';
  * HashRouter类型控制器
  */
 class HashRouterController extends React.Component {
+  displayName = 'HashRouterController';
   render() {
     const { basename, hot } = this.props;
     return (

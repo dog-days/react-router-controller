@@ -1,5 +1,7 @@
 # React Router Controller
 
+[![npm package](https://badge.fury.io/js/react-router-controller.svg)](https://www.npmjs.org/package/react-router-controller) [![NPM downloads](http://img.shields.io/npm/dm/react-router-controller.svg)](https://npmjs.org/package/react-router-controller)
+
 react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guide/2.0)，实现了根据url动态渲染页面（这得益于react-router@4.x.x实现的动态路由）。
 
 > **建议配合webpack使用**
@@ -30,10 +32,11 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
 
 - IE浏览器支持IE9版本以上（包括IE9）
 
-  因为IE不支持promise，所以需要引入polypill.js。
+  因为IE不支持promise，所以需要引入polyfill.js。
 
   ```js
   import 'react-router-controller/polyfill'
+  //如果已经有相关的promise polyfill，可以不用这个。
   ```
 
 ## 使用规范
@@ -83,6 +86,28 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
           //必须catch并返回false
           return false;
         });
+    }
+  });
+  ```
+
+  或者还可以这样，通过switch来处理（没有使用webpack的时候）：
+
+  ```js
+  import main from './controller/main'
+  import test from './controller/test'
+  Controller.set({
+    readControllerFile(controllerId) {
+      //必须返回promies对象
+      return new Promise(function(resolve, reject) {
+        switch(controllerId) {
+          case 'main':
+            resolve(main);
+            break;
+          case 'test':
+            resolve(test);
+            break;
+        }
+      });
     }
   });
   ```
@@ -293,9 +318,9 @@ export default IndexView;
   | viewId    | string  | view文件名id，通过解析url得到，怎样使用看使用者。            | true  |
   | firstLoad | boolean | 判断当前函数，view文件是否是第一次载入（false未载入，true是载入），使用者或许可能用到。 | false |
 
-- render(viewId, config, params) 
+- render(config, params,ViewComponent) 
 
-  每个xxView函数都要用到，名字虽然叫render，实际是还没渲染，只是返回传递了一个对象到react-router中使用。
+  每个`xxView`函数都要用到，名字虽然叫render，实际是还没渲染，只是返回传递了一个对象到react-router中使用。
 
   | 参数（param）     | 类型     | 说明                                       | 必填    |
   | ------------- | ------ | ---------------------------------------- | ----- |
@@ -365,7 +390,7 @@ ReactDOM.render(<MemoryRouterController />, document.getElementById('root'));
 | hot         | react-hot-loader热替换开启，每次热替换需要传入不同的值，可用随机数。 | 无    |
 | other.props | 继承react-router中MemoryRouter的所用props。     | 无    |
 
-### Layou组件
+### Layout组件
 
 使用者传进来的layout组件，react-router-controller会为这个组件添加以下props:
 
