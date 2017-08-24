@@ -1,4 +1,5 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import { getParams } from './util';
@@ -39,8 +40,9 @@ class RouteController extends React.Component {
   /**
    * 获取页面配置提供给react-router使用，这里是关键的一部。
    *@param {string} pathanme react-router中的history的location.pathname || location.hash，不是浏览器的location
+   *@param { object } pluginsConfig 插件配置
    */
-  getViewConfig(pathname) {
+  getViewConfig(pathname, pluginsConfig = {}) {
     var params = getParams(pathname);
     var controllerId = params.controllerId;
     var viewId = params.viewId;
@@ -52,27 +54,39 @@ class RouteController extends React.Component {
         return false;
       }
       //这里同一个controller只实例化一次
-      var contollerObj;
+      var controllerObj;
       if (controllerNewObjs[controllerId]) {
-        contollerObj = controllerNewObjs[controllerId];
+        controllerObj = controllerNewObjs[controllerId];
       } else {
-        contollerObj = new controller();
-        controllerNewObjs[controllerId] = contollerObj;
+        controllerObj = new controller();
+        controllerNewObjs[controllerId] = controllerObj;
       }
-      if (!contollerObj[funcName]) {
+      if (!controllerObj[funcName]) {
         return false;
       }
-      var config = contollerObj[funcName](params);
+      var config = controllerObj[funcName](params, pluginsConfig);
       return config;
     });
   }
-  setConfig() {
+  /**
+   * @param { object } pluginsConfig 插件配置
+   */
+  setConfig(pluginsConfig) {
+    if (!pluginsConfig) {
+      pluginsConfig = this.state.pluginsConfig;
+    }
     var pathname = this.getPathNameByHistory();
-    this.getViewConfig(pathname).then(config => {
+    return this.getViewConfig(pathname, pluginsConfig).then(config => {
       if (!config && pathname === '/') {
         const history = this.context.router.history;
-        //这里需要赋值
+        //这里围绕着主页重定向导致的一些问题，做了一些处理。
+        //这里需要赋值，不赋值重定向有问题。
         this.pathname = '/';
+        //防止pathname='/'，重定向时，导致this.state.pluginsConfig为undefined问题。
+        this.setState({
+          pluginsConfig,
+        });
+        //这里进行了重定向
         history.replace(ControllerConfig.indexPath);
         return false;
       }
@@ -89,8 +103,9 @@ class RouteController extends React.Component {
       }
       this.setState({
         config: lastConfig,
-        index: false,
+        pluginsConfig,
       });
+      return lastConfig;
     });
   }
   /**
@@ -130,7 +145,30 @@ class RouteController extends React.Component {
     }
   }
   componentDidMount() {
-    this.setConfig();
+    var configPromises =
+      ControllerConfig.plugins &&
+      ControllerConfig.plugins.reduce((ret, v) => {
+        var result = v(this);
+        //如果不是promie对象
+        if (!result.then && !result.catch) {
+          result = new Promise(function(resolve, reject) {
+            resolve(result);
+          });
+        }
+        ret.push(result);
+        return ret;
+      }, []);
+    Promise.all(configPromises).then(configs => {
+      var config = configs.reduce((ret, v) => {
+        if (!v.displayName) {
+          console.error('Controller Plugin 必须要设置displayName');
+        } else {
+          ret[v.displayName] = v;
+        }
+        return ret;
+      }, {});
+      this.setConfig(config);
+    });
   }
   componentWillReceiveProps(nextProps) {
     var pathname = this.getPathNameByHistory();
@@ -161,17 +199,40 @@ class RouteController extends React.Component {
       }
     }
   }
+  /**
+   * 重新渲染Router下的所有React组件。
+   * @return { Promise } 返回promise函数。
+   */
+  reRender() {
+    return this.setConfig();
+  }
 
   render() {
-    const { config } = this.state;
+    const { config, pluginsConfig } = this.state;
+    if (!config || !pluginsConfig) {
+      return false;
+    }
     var pathname = this.getPathNameByHistory();
     var layoutProps = {};
     if (config && config.viewConfig) {
       var viewConfig = config.viewConfig;
       layoutProps = {
+        reRender: this.reRender.bind(this),
         viewConfig,
         params: viewConfig.params,
         breadcrumbs: viewConfig.breadcrumbs,
+      };
+      layoutProps = {
+        ...layoutProps,
+        ...pluginsConfig,
+      };
+      var newViewProps = {
+        reRender: this.reRender.bind(this),
+      };
+      config.component.defaultProps = {
+        ...(config.component.defaultProps || {}),
+        ...newViewProps,
+        ...pluginsConfig,
       };
     }
     return (

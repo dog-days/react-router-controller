@@ -12,14 +12,19 @@ export default class MainController extends Controller {
       params
     );
   }
-  aboutView(params) {
+  aboutView(params, { i18n: { t } }) {
     if (!this.checkParams(params, ['id'])) {
       return false;
     }
     return this.render(
       {
-        title: '关于',
-        breadcrumbs: [],
+        title: t('关于'),
+        breadcrumbs: [
+          {
+            link: `/main/about/id/${params.id}`,
+            label: t('关于'),
+          },
+        ],
       },
       params
     );

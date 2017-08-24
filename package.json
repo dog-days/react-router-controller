@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/dog-days/react-router-controller#readme",
   "dependencies": {
+    "promise": "^8.0.1",
     "react-router-dom": "^4.1.2"
   },
   "devDependencies": {
@@ -46,7 +47,6 @@
     "husky": "^0.14.3",
     "lint-staged": "^4.0.3",
     "prettier": "^1.5.3",
-    "promise": "^8.0.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-boilerplate-app-scripts": "^0.0.29",

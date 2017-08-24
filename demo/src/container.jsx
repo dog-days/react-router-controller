@@ -1,5 +1,6 @@
 import React from 'react';
 import Controller, { BrowserRouterController } from 'react-router-controller';
+import i18n from '../../src/plugins/i18n';
 import nopage from './view/nopage';
 
 Controller.set({
@@ -24,6 +25,14 @@ Controller.set({
         return false;
       });
   },
+  plugins: [
+    i18n(language => {
+      return import(`./i18n/${language}.js`).catch(e => {
+        console.log(e);
+        return false;
+      });
+    }, require('./i18n/zh_CN').default),
+  ],
   //设置404页面，会覆盖默认的404页面
   NotMatchComponent: nopage,
   //设置首页path（跳转路径，即react-router path='/'时，会跳转到indexPath）
