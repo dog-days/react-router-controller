@@ -158,7 +158,7 @@ class RouteController extends React.Component {
         ret.push(result);
         return ret;
       }, []);
-    Promise.all(configPromises).then(configs => {
+    Promise.all(configPromises || []).then(configs => {
       var config = configs.reduce((ret, v) => {
         if (!v.displayName) {
           console.error('Controller Plugin 必须要设置displayName');
