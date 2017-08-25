@@ -12,7 +12,9 @@ class NoPage extends React.Component {
         </article>
         <article>
           <ul>
-            <li><Link to="/">Back to Home</Link></li>
+            <li>
+              <Link to="/">Back to Home</Link>
+            </li>
           </ul>
         </article>
       </section>

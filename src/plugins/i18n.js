@@ -1,9 +1,9 @@
 /**
- *@param { function } languageImport 返回promise对象的语言包，如webpack的import
+ *@param { function } switchLanguageList 返回promise对象的语言包，如webpack的import
  * return import(`src/locale/${language}`).then(language => {});
  *@param { array } defaultLanguageList 默认语言翻译列表
  */
-export default function i18N(languageImport, defaultLanguageList) {
+export default function i18N(switchLanguageList, defaultLanguageList) {
   var displayName = 'i18n';
   //中转作用
   var __Locale__;
@@ -13,7 +13,7 @@ export default function i18N(languageImport, defaultLanguageList) {
    */
   return routeControllerComponentObj => {
     function switchLanguage(language, reRender = true) {
-      return languageImport(language).then(languageList => {
+      return switchLanguageList(language).then(languageList => {
         if (!languageList) {
           return false;
         }

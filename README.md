@@ -35,7 +35,7 @@ react-router-controller启发于[PHP Yii框架](http://www.yiichina.com/doc/guid
   因为IE不支持promise，所以需要引入polyfill.js。
 
   ```js
-  import 'react-router-controller/polyfill'
+  import 'react-router-controller/libs/polyfill'
   //如果已经有相关的promise polyfill，可以不用这个。
   ```
 
@@ -426,10 +426,95 @@ ReactDOM.render(<MemoryRouterController />, document.getElementById('root'));
 
   同Layout组件。
 
-  ​
 
+## 插件
 
+**插件其实就是个函数**，插件都需要返回一个json对象，这个json对象可以在view组件和layout组件props，还有controller的`xxView`方法中第二个参数中访问到。
 
+插件都需要在`Controlle.set`配置：
+
+```js
+Controller.set({
+  plugins: [plugin1,plugin2]
+})
+```
+
+### i18n插件
+
+#### **参数说明**
+
+| 参数                  | 类型       | 说明                                       | 必填   |
+| ------------------- | -------- | ---------------------------------------- | ---- |
+| switchLanguageList  | function | 切换语言，参数是语言名称。返回的可以是promise（promise中返回的是语言数组列表），也可以直接语言数组列表。最好使用webpack的异步import。 | true |
+| defaultLanguageList | array    | 默认的语言列表                                  | true |
+
+#### **返回值**
+
+| 返回值            | 类型       | 说明                  |
+| -------------- | -------- | ------------------- |
+| t              | function | 用作翻译转换，默认参数是需要翻译的文案 |
+| switchLanguage | function | 默认的语言列表             |
+| displayName    | string   | 插件命名，值为i18n。        |
+
+#### 使用
+
+配置文件
+
+```js
+Controller.set({
+  plugins: [
+    i18n(language => {
+      return import(`./i18n/${language}.js`).catch(e => {
+        console.log(e);
+        return false;
+      });
+    }, require('./i18n/zh_CN').default),
+  ]
+})
+```
+
+经过配置，react-router-controller运行后，layout组件和view组件的props都可以访问`props.i18n`，还有controller的`xxView`方法中第二个参数也可以访问到这个对象。
+
+使用i18n传进来的对象：
+
+```jsx
+import React from 'react';
+
+class AboutView extends React.Component {
+  render() {
+    console.debug('about页面');
+    const { i18n: { t } } = this.props;
+    return (
+      <div>
+        {t('关于页面')}
+      </div>
+    );
+  }
+}
+export default AboutView;
+```
+
+controller文件
+
+```js
+import Controller from 'react-router-controller';
+export default class MainController extends Controller {
+  aboutView(params, { i18n: { t } }) {
+    return this.render(
+      {
+        title: t('关于'),
+        breadcrumbs: [
+          {
+            link: `/main/about/id/${params.id}`,
+            label: t('关于'),
+          },
+        ],
+      },
+      params
+    );
+  }
+}
+```
 
 
 

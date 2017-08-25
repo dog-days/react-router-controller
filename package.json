@@ -4,6 +4,7 @@
   "description": "react-router-controller，react路由控制器",
   "main": "libs/index.js",
   "scripts": {
+    "publish": "npm run build && npm publish",
     "build": "npm run build-es && npm run build-default",
     "build-es": "cross-env BABEL_ENV=es babel ./src -d es",
     "build-default": "cross-env BABEL_ENV=default babel ./src -d libs",
@@ -12,6 +13,7 @@
     "start-demo": "react-boilerplate-app-scripts start",
     "build-demo": "react-boilerplate-app-scripts build",
     "precommit": "lint-staged",
+    "switch-demo": "switch-demo",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "lint-staged": {
@@ -50,16 +52,16 @@
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-boilerplate-app-scripts": "^0.0.29",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "switch-demo": "0.0.1"
   },
   "peerDependencies": {
     "prop-types": ">=15.5.7",
     "react": ">=15.5.0"
   },
   "react-boilerplate-app-scripts": {
-    "prefixURL": "/test",
-    "appSrcPath": "demo/src",
-    "appPublicPath": "demo/public"
+    "appSrcPath": "demo/demo-i18n/src",
+    "appPublicPath": "demo/demo-i18n/public"
   },
   "babel": {
     "presets": [
