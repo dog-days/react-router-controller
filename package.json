@@ -1,10 +1,10 @@
 {
   "name": "react-router-controller",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "react-router-controller，react路由控制器",
   "main": "libs/index.js",
   "scripts": {
-    "publish": "npm run build && npm publish",
+    "build-publish": "npm run build && npm publish",
     "build": "npm run build-es && npm run build-default",
     "build-es": "cross-env BABEL_ENV=es babel ./src -d es",
     "build-default": "cross-env BABEL_ENV=default babel ./src -d libs",
@@ -60,8 +60,8 @@
     "react": ">=15.5.0"
   },
   "react-boilerplate-app-scripts": {
-    "appSrcPath": "demo/demo-i18n/src",
-    "appPublicPath": "demo/demo-i18n/public"
+    "appSrcPath": "demo/demo-default/src",
+    "appPublicPath": "demo/demo-default/public"
   },
   "babel": {
     "presets": [

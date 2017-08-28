@@ -6,12 +6,14 @@ import Controller, {
 import nopage from './view/nopage';
 
 Controller.set({
-  readViewFile(viewId, firstLoad) {
+  readViewFile(viewId, controllerId, firstLoad) {
     console.debug(firstLoad);
     //view可以异步载入
-    return import(`./view/${viewId}/index.jsx`).then(component => {
-      return component.default;
-    });
+    return import(`./view/${controllerId}/${viewId}/index.jsx`).then(
+      component => {
+        return component.default;
+      }
+    );
   },
   readControllerFile(controllerId) {
     //webpackMode: eager是使import变为不异步，跟require一样，
