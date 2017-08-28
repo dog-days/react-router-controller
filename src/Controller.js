@@ -97,6 +97,7 @@ export default class Contoller {
       return returnConfig;
     } else {
       var viewId = params.viewId;
+      var controllerId = params.controllerId;
       //--begin view组件是否是第一次载入
       var firstLoad = allViewFirstLoad[viewId];
       if (allViewFirstLoad[viewId] === undefined) {
@@ -106,7 +107,11 @@ export default class Contoller {
       //--end view组件是否是第一次载入
       return (
         ControllerConfig.readViewFile &&
-        ControllerConfig.readViewFile(viewId, firstLoad).then(ViewComponent => {
+        ControllerConfig.readViewFile(
+          viewId,
+          controllerId,
+          firstLoad
+        ).then(ViewComponent => {
           //标记view组件第一次已经载入
           allViewFirstLoad[viewId] = false;
           returnConfig.component = props => {
