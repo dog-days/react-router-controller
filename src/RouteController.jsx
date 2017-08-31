@@ -55,7 +55,8 @@ class RouteController extends React.Component {
       }
       //这里同一个controller只实例化一次
       var controllerObj;
-      if (controllerNewObjs[controllerId]) {
+      const { hot } = this.props;
+      if (controllerNewObjs[controllerId] && !hot) {
         controllerObj = controllerNewObjs[controllerId];
       } else {
         controllerObj = new controller();
