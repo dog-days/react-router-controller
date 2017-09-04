@@ -12,6 +12,7 @@
     "build-es-watch": "cross-env BABEL_ENV=es babel ./src -d es -w",
     "start-demo": "react-boilerplate-app-scripts start",
     "build-demo": "react-boilerplate-app-scripts build",
+    "serve-build": "react-boilerplate-app-scripts serve-build",
     "precommit": "lint-staged",
     "switch-demo": "switch-demo",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -51,7 +52,7 @@
     "prettier": "^1.5.3",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
-    "react-boilerplate-app-scripts": "^0.0.29",
+    "react-boilerplate-app-scripts": "^0.1.8",
     "react-dom": "^15.6.1",
     "switch-demo": "0.0.1"
   },

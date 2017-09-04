@@ -1,13 +1,17 @@
 'use strict';
+
+const util = require('react-boilerplate-app-utils');
 const path = require('path');
+const fs = require('fs-extra');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+const SimpleProgressPlugin = require('webpack-simple-progress-plugin');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const util = require('react-boilerplate-app-utils');
-const scriptsPackagename = 'react-boilerplate-app-scripts';
+const chalk = require('chalk');
+const scriptsPackagename = util.scriptsPackagename;
 const paths = require(util.pathResolve('config/paths.js', scriptsPackagename));
 
 //bebin-----------packageJson信息获取
@@ -20,11 +24,28 @@ function getInfo(packageId) {
 }
 const useSass = getInfo('sass-loader') && getInfo('node-sass');
 const useLess = getInfo('less') && getInfo('less-loader');
-const useImmutable = getInfo('immutable') && getInfo('redux-immutable');
 //end  -----------packageJson信息获取
 const cwdPackageJsonConfig = util.getDefaultCwdPackageJsonConfig(
   scriptsPackagename
 );
+if (cwdPackageJsonConfig.dll) {
+  //dll js 文件路径，这里只有一个dll，没设置多个。
+  const dllPath = path.resolve(
+    paths.appPublic,
+    cwdPackageJsonConfig.basename || '',
+    'dll.app.js'
+  );
+  if (!fs.existsSync(dllPath)) {
+    console.log(
+      chalk.red(
+        `${dllPath} is not existed.\r\n${chalk.cyan(
+          'Please run: npm run build-dll'
+        )}`
+      )
+    );
+    process.exit();
+  }
+}
 
 const postcssLoaderConfig = {
   loader: 'postcss-loader',
@@ -44,6 +65,21 @@ const postcssLoaderConfig = {
   },
 };
 
+let entry = [paths.appEntry];
+const exclude = [
+  /node_modules/,
+  path.resolve(process.cwd(), 'config'),
+  path.resolve(process.cwd(), 'bin'),
+  path.resolve(process.cwd(), 'build'),
+  /.cache/,
+];
+if (!cwdPackageJsonConfig.dll) {
+  //我们添加一些默认的polyfills
+  //如果启用了dll，就不用polyfills
+  entry.push(
+    require.resolve(util.pathResolve('config/polyfills.js', scriptsPackagename))
+  );
+}
 //webpack配置项
 var config = {
   //任何错误立即终止
@@ -54,20 +90,19 @@ var config = {
     hints: false,
   },
   entry: {
-    app: paths.appEntry,
+    app: entry,
   },
   output: {
-    filename: 'static/js/bundle.js?hash=[hash]',
-    //js打包输出目录，以package.json为准，是用相对路径
+    filename: 'static/js/bundle.[hash].js',
+    //js打包输出目录
     path: paths.appBuild,
     //内存和打包静态文件访问目录，以index.html为准,最好以斜杠/结尾，要不有意想不到的bug
-    //因为有些网站访问web app不是在根目录，可能是根目录中的的文件夹，prefixURL是用来设置这种情况的
+    //因为有些网站访问web app不是在根目录，可能是根目录中的的文件夹，basename是用来设置这种情况的
     //例如`/demo`，访问网站根目录demo文件中的web app
-    publicPath: `${cwdPackageJsonConfig.prefixURL}/` || '/',
+    publicPath: `${cwdPackageJsonConfig.basename}/` || '/',
     //定义require.ensure文件名
-    chunkFilename: 'static/js/[name]-[id]-[chunkHash].chunk.js',
+    chunkFilename: 'static/js/[name]-[id]-[hash].chunk.js',
     libraryTarget: 'var',
-    sourceMapFilename: '[file].map',
   },
   module: {
     rules: [
@@ -116,27 +151,44 @@ var config = {
         },
       },
       {
+        //确保在babel转换前执行
+        enforce: 'pre',
+        test: /\.js[x]?$/,
+        //之所以不用include是因为，如果单独是用react-boilerplate-app-scirpts，
+        //修改了paths.src的路径，但是还是想检查其他的目录，这就会有问题。
+        exclude,
+        loader: 'eslint-loader',
+      },
+      {
         //匹配.js或.jsx后缀名的文件
         test: /\.js[x]?$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
+        options: {
+          cacheDirectory: true,
+        },
+        //之所以不用include是因为，如果单独是用react-boilerplate-app-scirpts，
+        //修改了paths.src的路径，但是还是想检查其他的目录，这就会有问题。
+        exclude,
       },
     ],
   },
   externals: {},
   resolve: {
     alias: {
-      //这里是demo/src
       src: paths.src,
       //这里是./src
       'react-router-controller': path.resolve('src'),
     },
     //不可留空字符串
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.web.js', '.web.jsx'],
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     new HtmlWebpackPlugin({
+      dllScirpts: cwdPackageJsonConfig.dll
+        ? `<script type="text/javascript" src="${cwdPackageJsonConfig.basename}/dll.app.js"></script>`
+        : '',
+      basename: cwdPackageJsonConfig.basename,
       inject: true,
       template: paths.appHtml,
       minify: {
@@ -153,9 +205,8 @@ var config = {
       },
     }),
     new webpack.DefinePlugin({
-      'process.env.PREFIX_URL': JSON.stringify(cwdPackageJsonConfig.prefixURL),
+      'process.env.basename': JSON.stringify(cwdPackageJsonConfig.basename),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'process.env.useImmutable': JSON.stringify(useImmutable),
     }),
     // This helps ensure the builds are consistent if source hasn't changed:
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -165,22 +216,53 @@ var config = {
       minimize: true,
       debug: false,
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
+    new ParallelUglifyPlugin({
+      cacheDir: '.cache/',
       sourceMap: true,
-      compress: {
-        warnings: false,
+      uglifyJS: {
+        output: {
+          comments: false,
+        },
+        compress: {
+          warnings: false,
+        },
       },
     }),
     new ExtractTextPlugin({
-      filename: 'static/css/styles.css?hash=[hash]',
+      filename: 'static/css/styles.[hash].css',
       //最好true,要不后面加上sass-loader等时，会出现css没有提取的现象
       allChunks: true,
     }),
-    new ProgressBarPlugin(),
+    new SimpleProgressPlugin({
+      progressOptions: {
+        complete: chalk.bgGreen(' '),
+        incomplete: chalk.bgWhite(' '),
+        width: 20,
+        total: 100,
+        clear: true,
+      },
+    }),
     new CaseSensitivePathsPlugin(),
   ],
 };
+
+//如果设置了dll，添加DllReferencePlugin
+if (cwdPackageJsonConfig.dll) {
+  config.plugins.push(
+    new webpack.DllReferencePlugin({
+      manifest: require(path.resolve(paths.appPublic, 'app-manifest.json')),
+      extensions: [
+        '.js',
+        '.jsx',
+        '.ts',
+        '.tsx',
+        '.json',
+        '.web.js',
+        '.web.jsx',
+      ],
+    })
+  );
+}
 //使用sass配置
 if (useSass) {
   config.module.rules.push({
