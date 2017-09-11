@@ -1,3 +1,18 @@
+## 0.1.5（2017-09-11）
+
+### 解决bug
+
+- 解决viewId带“-”字符，controller中xxxView函数执行问题
+  eg. viewId=status-test的会执行statusTestView方法
+
+### 更新
+
+无
+
+### 新功能
+
+无
+
 ## 0.1.0（2017-08-24）
 
 ### 解决bug
