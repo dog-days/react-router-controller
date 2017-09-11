@@ -2,7 +2,7 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
-import { getParams } from './util';
+import { getParams, stringAdapter } from './util';
 import { ControllerConfig } from './Controller';
 import DefaultNotMatchComponent from './DefaultNotMatchComponent';
 
@@ -46,7 +46,7 @@ class RouteController extends React.Component {
     var params = getParams(pathname);
     var controllerId = params.controllerId;
     var viewId = params.viewId;
-    var funcName = viewId + 'View';
+    var funcName = stringAdapter(viewId) + 'View';
     return ControllerConfig.readControllerFile(
       controllerId
     ).then(controller => {

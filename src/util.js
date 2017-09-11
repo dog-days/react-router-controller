@@ -22,7 +22,34 @@ export function pathnameAdapter(pathname) {
   }
   return pathname;
 }
-
+/**
+ * toUpperCase 小写转大写
+ * @param  {String} string 传进来的字符串
+ * @param  {Int}  start  开始位置，默认0
+ * @param  {Int}  end  介绍位置，默认1
+ * @return {string}
+ */
+export function toUpperCaseByPosition(string, start = 0, end = 1) {
+  var str1 = string.substr(start, end).toUpperCase();
+  var str2 = string.substr(end);
+  return str1 + str2;
+}
+//字符串如test-large-thing，转换成testLargeThing
+export function stringAdapter(str) {
+  if (!str) {
+    return str;
+  }
+  let splitArr = str.split('-');
+  let ret = '';
+  splitArr.forEach((v, k) => {
+    if (k !== 0) {
+      ret += toUpperCaseByPosition(v);
+    } else {
+      ret += v;
+    }
+  });
+  return ret;
+}
 /**
  * 根据viewId和contollerId获取url的配置参数
  * url风格定义如下，跟php框架的Yii一致，例如：
@@ -49,8 +76,8 @@ export function getParams(pathname) {
   var splitParams = splitPathWithReplaceStr[1].split('/');
   splitParams.shift();
   var params = {
-    controllerId,
-    viewId,
+    controllerId: controllerId,
+    viewId: viewId,
   };
   //整合params
   splitParams.forEach((v, k) => {
