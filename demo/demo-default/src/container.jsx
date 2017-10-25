@@ -30,7 +30,9 @@ Controller.set({
   NotMatchComponent: nopage,
   //设置首页path（跳转路径，即react-router path='/'时，会跳转到indexPath）
   //第一个字符必须是'/'，不能是main/index，要是绝对的路径
-  indexPath: '/main/index',
+  indexPath: () => {
+    return '/main/index';
+  },
 });
 
 export default function container(props) {

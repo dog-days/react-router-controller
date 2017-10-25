@@ -88,7 +88,14 @@ class RouteController extends React.Component {
           pluginsConfig,
         });
         //这里进行了重定向
-        history.replace(ControllerConfig.indexPath);
+        if (
+          Object.prototype.toString.apply(ControllerConfig.indexPath) ===
+          '[object Function]'
+        ) {
+          history.replace(ControllerConfig.indexPath());
+        } else {
+          history.replace(ControllerConfig.indexPath);
+        }
         return false;
       }
       var lastConfig;

@@ -1,6 +1,6 @@
 {
   "name": "react-router-controller",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "react-router-controller，react路由控制器",
   "main": "libs/index.js",
   "scripts": {
