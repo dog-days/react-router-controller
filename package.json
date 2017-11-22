@@ -54,6 +54,8 @@
     "react": "^15.6.1",
     "react-boilerplate-app-scripts": "^0.1.8",
     "react-dom": "^15.6.1",
+    "preact": "^8.2.6",
+    "preact-compat": "^3.17.0",
     "switch-demo": "0.0.1"
   },
   "peerDependencies": {

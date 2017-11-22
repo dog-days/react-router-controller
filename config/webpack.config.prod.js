@@ -175,6 +175,8 @@ var config = {
   externals: {},
   resolve: {
     alias: {
+      //react: 'preact-compat',
+      //'react-dom': 'preact-compat',
       src: paths.src,
       //这里是./src
       'react-router-controller': path.resolve('src'),
