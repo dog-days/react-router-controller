@@ -1,3 +1,17 @@
+## 0.1.7（2017-10-26）
+
+### 解决bug
+
+- fix Controller.js中 ControllerConfig.readViewFile的firstLoad参数不正确问题
+
+### 更新
+
+无
+
+### 新功能
+
+无
+
 ## 0.1.6（2017-10-25）
 
 ### 解决bug

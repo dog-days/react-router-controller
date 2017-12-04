@@ -103,7 +103,7 @@ export default class Contoller {
         allViewFirstLoad[controllerId] = {};
       }
       let firstLoad = allViewFirstLoad[controllerId][viewId];
-      if (allViewFirstLoad[viewId] === undefined) {
+      if (allViewFirstLoad[controllerId][viewId] === undefined) {
         //为undefined就是第一次载入
         firstLoad = true;
       }
