@@ -1,6 +1,6 @@
 import React from 'react';
 //基本的配置，会在当前类和./index.jsx中使用。
-export var ControllerConfig = {};
+export let ControllerConfig = {};
 //所有view是否是第一次载入状态
 const allViewFirstLoad = {};
 /**
@@ -26,7 +26,7 @@ export default class Contoller {
    * @param { array } paramsSetting eg. ['id','appid']
    */
   checkParams(params, paramsSetting) {
-    var flag = true;
+    let flag = true;
     paramsSetting.forEach(v => {
       if (!~Object.keys(params).indexOf(v)) {
         flag = false;
@@ -44,16 +44,16 @@ export default class Contoller {
    * @return { string } eg. /main/about/id/100/appid/aiermu
    */
   getReactRouterPath(params) {
-    var path = '/';
-    for (var k in params) {
-      var v = params[k];
+    let path = '/';
+    for (let k in params) {
+      let v = params[k];
       if (k === 'controllerId' || k === 'viewId') {
         path += `${v}/`;
       } else {
         path += `:__${k}__/:${k}/`;
       }
     }
-    var pathArr = path.split('/');
+    let pathArr = path.split('/');
     pathArr.pop();
     path = pathArr.join('/');
     return path;
@@ -79,12 +79,12 @@ export default class Contoller {
     config.params = params;
     //end--页面title设置
     //view的部分props
-    var newProps = {
+    let newProps = {
       actions: config.actions,
       viewConfig: config,
       params,
     };
-    var returnConfig = {
+    let returnConfig = {
       //存放所有的view config配置
       viewConfig: config,
       LayoutComponent: this.LayoutComponent,
@@ -96,10 +96,13 @@ export default class Contoller {
       };
       return returnConfig;
     } else {
-      var viewId = params.viewId;
-      var controllerId = params.controllerId;
+      let viewId = params.viewId;
+      let controllerId = params.controllerId;
       //--begin view组件是否是第一次载入
-      var firstLoad = allViewFirstLoad[viewId];
+      if (!allViewFirstLoad[controllerId]) {
+        allViewFirstLoad[controllerId] = {};
+      }
+      let firstLoad = allViewFirstLoad[controllerId][viewId];
       if (allViewFirstLoad[viewId] === undefined) {
         //为undefined就是第一次载入
         firstLoad = true;
@@ -113,7 +116,7 @@ export default class Contoller {
           firstLoad
         ).then(ViewComponent => {
           //标记view组件第一次已经载入
-          allViewFirstLoad[viewId] = false;
+          allViewFirstLoad[controllerId][viewId] = false;
           returnConfig.component = props => {
             return <ViewComponent {...props} {...newProps} />;
           };
